@@ -5,12 +5,15 @@
 #include "EyeRenderer.h"
 #include "DemonEye.h"
 #include "DemonEyeRenderer.h"
+#include "BeautifulEye.h"
+#include "BeautifulEyeRenderer.h"
 #include "Config.h"
 
 // 眼睛类型枚举
 enum EyeType {
   NORMAL_EYE = 0,
-  DEMON_EYE = 1
+  DEMON_EYE = 1,
+  BEAUTIFUL_EYE = 2
 };
 
 // 全局对象
@@ -31,11 +34,15 @@ EyeRenderer normalRenderer;
 DemonEye demonEye;
 DemonEyeRenderer demonRenderer;
 
+// 美丽女生眼睛对象
+BeautifulEye beautifulEye;
+BeautifulEyeRenderer beautifulRenderer;
+
 // 按钮点击回调函数
 void onButtonClick() {
   Serial.println("=== Button Clicked! ===");
 
-  // 切换眼睛类型
+  // 循环切换眼睛类型
   if (currentEyeType == NORMAL_EYE) {
     currentEyeType = DEMON_EYE;
     Serial.println("Switched to Demon Eye!");
@@ -45,6 +52,18 @@ void onButtonClick() {
 
     // 立即渲染一次魅魔眼睛
     demonRenderer.render(demonEye);
+  } else if (currentEyeType == DEMON_EYE) {
+    currentEyeType = BEAUTIFUL_EYE;
+    Serial.println("Switched to Beautiful Eye!");
+
+    // 重新初始化美丽眼睛对象,避免眨眼状态异常
+    beautifulEye = BeautifulEye();
+
+    // 清空屏幕为白色（美丽眼睛背景）
+    display.fillScreen(BeautifulColorConfig::BG_COLOR);
+
+    // 立即渲染一次美丽眼睛
+    beautifulRenderer.render(beautifulEye);
   } else {
     currentEyeType = NORMAL_EYE;
     Serial.println("Switched to Normal Eye!");
@@ -83,6 +102,7 @@ void setup() {
   // 初始化渲染器（使用共享的 sprite）
   normalRenderer.begin(sharedSprite);
   demonRenderer.begin(sharedSprite);
+  beautifulRenderer.begin(sharedSprite);
 
   // 配置按钮
   bootButton.attachClick(onButtonClick);
@@ -108,7 +128,7 @@ void loop() {
     normalRenderer.render(normalEye);
 
     delay(EyeConfig::FRAME_DELAY);
-  } else {
+  } else if (currentEyeType == DEMON_EYE) {
     // 更新魅魔眼球状态
     demonEye.randomMove();
     demonEye.updateMovement();
@@ -119,5 +139,16 @@ void loop() {
     demonRenderer.render(demonEye);
 
     delay(DemonEyeConfig::FRAME_DELAY);
+  } else {  // BEAUTIFUL_EYE
+    // 更新美丽女生眼球状态
+    beautifulEye.randomMove();
+    beautifulEye.updateMovement();
+    beautifulEye.updateBlink();
+    beautifulEye.updateSparkle();
+
+    // 渲染美丽眼睛
+    beautifulRenderer.render(beautifulEye);
+
+    delay(BeautifulEyeConfig::FRAME_DELAY);
   }
 }

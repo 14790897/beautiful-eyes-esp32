@@ -110,4 +110,53 @@ namespace DemonColorConfig {
     constexpr uint16_t EYELASH_COLOR = 0x0000;   // 黑色睫毛
 }
 
+// 美丽女生眼睛配置
+namespace BeautifulEyeConfig {
+    constexpr float EYE_CENTER_X = 120.0f;
+    constexpr float EYE_CENTER_Y = 120.0f;
+    constexpr float IRIS_SIZE = 58.0f;          // 大而有神的虹膜
+    constexpr float PUPIL_SIZE = 22.0f;         // 适中的瞳孔
+    constexpr float MAX_PUPIL_MOVE = 28.0f;     // 灵动的眼神
+    constexpr float PUPIL_SMOOTH = 0.12f;       // 柔和的移动
+
+    // 眨眼参数 - 温柔优雅的眨眼
+    constexpr int BLINK_MIN_INTERVAL = 2500;
+    constexpr int BLINK_MAX_INTERVAL = 6000;
+    constexpr float BLINK_SPEED = 0.12f;
+
+    // 眼球运动参数 - 优雅而自然
+    constexpr int MOVE_MIN_INTERVAL = 800;
+    constexpr int MOVE_MAX_INTERVAL = 2500;
+    constexpr int MOVE_RANGE_X = 28;
+    constexpr int MOVE_RANGE_Y = 23;
+
+    // 睫毛参数
+    constexpr int UPPER_LASH_COUNT = 18;        // 上睫毛数量
+    constexpr int LOWER_LASH_COUNT = 12;        // 下睫毛数量
+    constexpr int LASH_MIN_LENGTH = 12;         // 最小睫毛长度
+    constexpr int LASH_MAX_LENGTH = 22;         // 最大睫毛长度
+
+    // 渲染参数
+    constexpr int FRAME_DELAY = 50;  // 约20fps
+}
+
+// 美丽女生眼睛颜色配置
+namespace BeautifulColorConfig {
+    constexpr uint16_t BG_COLOR = 0xFFFF;        // 白色背景
+    constexpr uint16_t SCLERA_COLOR = 0xFFFF;    // 纯净的眼白
+    constexpr uint16_t IRIS_COLOR = 0x435C;      // 温柔的棕色虹膜
+    constexpr uint16_t IRIS_OUTER = 0x2945;      // 深棕色外圈
+    constexpr uint16_t IRIS_MIDDLE = 0x6B8E;     // 中间渐变色
+    constexpr uint16_t IRIS_INNER = 0x8D11;      // 金棕色内圈
+    constexpr uint16_t IRIS_DETAIL = 0x5ACB;     // 细腻的纹理
+    constexpr uint16_t PUPIL_COLOR = 0x0000;     // 黑色瞳孔
+    constexpr uint16_t EYELID_COLOR = 0xFDF8;    // 白皙的皮肤
+    constexpr uint16_t EYESHADOW_COLOR = 0xF7BE; // 淡粉色眼影
+    constexpr uint16_t EYELINER_COLOR = 0x2124;  // 深棕色眼线
+    constexpr uint16_t HIGHLIGHT_MAIN = 0xFFFF;  // 主高光(白色)
+    constexpr uint16_t HIGHLIGHT_SEC = 0xEF7D;   // 次高光(淡蓝色)
+    constexpr uint16_t EYELASH_COLOR = 0x0841;   // 深棕色睫毛
+    constexpr uint16_t SPARKLE_COLOR = 0xFFFF;   // 闪亮点(白色)
+}
+
 #endif // CONFIG_H
