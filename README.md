@@ -64,39 +64,87 @@ pio device monitor
 
 ## 代码结构
 
+项目采用模块化设计，职责分离清晰：
+
 ```
 beautiful-eyes/
+├── include/
+│   ├── Config.h          # 配置文件（硬件引脚、颜色、参数）
+│   ├── Display.h         # 显示屏配置类
+│   ├── Eye.h             # 眼睛数据和逻辑类
+│   └── EyeRenderer.h     # 眼睛渲染器类
 ├── src/
-│   └── main.cpp          # 主程序文件
-├── include/              # 头文件目录
+│   ├── Display.cpp       # 显示屏实现
+│   ├── Eye.cpp           # 眼睛逻辑实现
+│   ├── EyeRenderer.cpp   # 渲染实现
+│   └── main.cpp          # 主程序入口（简洁）
 ├── lib/                  # 本地库目录
 ├── platformio.ini        # PlatformIO 配置
 └── README.md            # 项目说明
 ```
 
-## 主要组件说明
+## 架构设计
 
-### 眼睛结构体 (`Eye`)
+### 模块职责
 
-包含眼球的所有参数：
-- 眼球中心位置
-- 瞳孔位置和大小
-- 虹膜大小
-- 眨眼进度
-- 眼睑位置
+#### 1. **Config.h** - 配置管理
+集中管理所有配置参数，便于调整：
+- `HardwareConfig`: 硬件引脚和 SPI 配置
+- `ColorConfig`: 颜色定义（虹膜、瞳孔、眼睑等）
+- `EyeConfig`: 眼睛参数（大小、运动范围、眨眼间隔）
 
-### 渲染函数
+#### 2. **Display** - 显示屏抽象层
+封装 GC9A01 屏幕的初始化和配置：
+- 继承自 `lgfx::LGFX_Device`
+- 配置 SPI 总线和面板参数
+- 提供简洁的 `begin()` 接口
 
-- `drawVeins()`: 绘制眼白上的血管纹理
-- `drawIrisDetail()`: 绘制虹膜的径向纹理和边缘细节
-- `drawReflections()`: 绘制瞳孔上的高光反射
-- `drawEye()`: 主渲染函数，整合所有元素
+#### 3. **Eye** - 眼睛数据模型
+管理眼睛的状态和行为逻辑：
+- **数据**: 位置、大小、眨眼进度
+- **行为**:
+  - `updateMovement()`: 平滑的瞳孔移动
+  - `updateBlink()`: 自动眨眼动画
+  - `randomMove()`: 随机注视点生成
+- **封装**: 私有数据，公开获取器
 
-### 动画函数
+#### 4. **EyeRenderer** - 渲染器
+负责将眼睛数据绘制到屏幕：
+- 使用 Sprite 双缓冲技术
+- 分层渲染：血管 → 虹膜 → 瞳孔 → 高光 → 眼睑
+- 细节方法：
+  - `drawVeins()`: 血管纹理
+  - `drawIrisDetail()`: 虹膜径向纹理
+  - `drawReflections()`: 高光反射
+  - `drawEyelashes()`: 睫毛
 
-- `updateEyeMovement()`: 更新瞳孔的平滑移动
-- `updateBlink()`: 处理眨眼动画
-- `randomEyeMovement()`: 生成随机的眼球运动
+#### 5. **main.cpp** - 主程序
+保持简洁，只负责组装和调度：
+```cpp
+void loop() {
+  eye.randomMove();        // 生成运动目标
+  eye.updateMovement();    // 更新位置
+  eye.updateBlink();       // 更新眨眼
+  renderer.render(eye);    // 渲染到屏幕
+}
+```
+
+## 设计优势
+
+### 解耦与模块化
+- **单一职责**: 每个类只负责一个功能域
+- **低耦合**: 模块间通过接口通信，易于替换
+- **高内聚**: 相关功能集中在同一模块
+
+### 可维护性
+- **集中配置**: 所有参数在 `Config.h` 统一管理
+- **清晰分层**: 数据（Eye）与表现（Renderer）分离
+- **易于调试**: 可独立测试每个模块
+
+### 可扩展性
+- **添加新特性**: 如添加双眼只需创建两个 Eye 实例
+- **更换显示屏**: 只需修改 Display 类
+- **自定义渲染**: 继承 EyeRenderer 实现新风格
 
 ## 性能优化
 
@@ -107,37 +155,47 @@ beautiful-eyes/
 
 ## 自定义配置
 
+得益于模块化设计，所有配置都集中在 `include/Config.h` 文件中。
+
 ### 修改颜色
 
-在 `main.cpp` 中可以自定义颜色：
+在 `Config.h` 的 `ColorConfig` 命名空间中修改：
 
 ```cpp
-const uint16_t BG_COLOR = 0xFFFF;        // 背景色
-const uint16_t IRIS_COLOR = 0x4208;      // 虹膜颜色
-const uint16_t PUPIL_COLOR = 0x0000;     // 瞳孔颜色
-const uint16_t EYELID_COLOR = 0xFBE4;    // 眼睑颜色
+namespace ColorConfig {
+    constexpr uint16_t IRIS_COLOR = 0x4208;      // 虹膜颜色
+    constexpr uint16_t PUPIL_COLOR = 0x0000;     // 瞳孔颜色
+    constexpr uint16_t EYELID_COLOR = 0xFBE4;    // 眼睑颜色
+    // ... 更多颜色配置
+}
 ```
 
 ### 调整眼球参数
 
-在 `initEye()` 函数中修改：
+在 `Config.h` 的 `EyeConfig` 命名空间中修改：
 
 ```cpp
-eye.irisSize = 50;      // 虹膜大小
-eye.pupilSize = 20;     // 瞳孔大小
-eye.blinkDuration = 150; // 眨眼持续时间
+namespace EyeConfig {
+    constexpr float IRIS_SIZE = 50.0f;           // 虹膜大小
+    constexpr float PUPIL_SIZE = 20.0f;          // 瞳孔大小
+    constexpr float MAX_PUPIL_MOVE = 25.0f;      // 瞳孔最大移动距离
+    constexpr int BLINK_MIN_INTERVAL = 2000;     // 最小眨眼间隔(ms)
+    constexpr int BLINK_MAX_INTERVAL = 5000;     // 最大眨眼间隔(ms)
+}
 ```
 
 ### 修改引脚连接
 
-如果使用不同的引脚连接，请在 `LGFX` 类构造函数中修改：
+在 `Config.h` 的 `HardwareConfig` 命名空间中修改：
 
 ```cpp
-cfg.pin_sclk = 2;   // 时钟引脚
-cfg.pin_mosi = 3;   // 数据引脚
-cfg.pin_dc = 10;    // 数据/命令引脚
-cfg.pin_cs = 6;     // 片选引脚
-cfg.pin_rst = 7;    // 复位引脚
+namespace HardwareConfig {
+    constexpr int PIN_SCLK = 2;   // 时钟引脚
+    constexpr int PIN_MOSI = 3;   // 数据引脚
+    constexpr int PIN_DC = 10;    // 数据/命令引脚
+    constexpr int PIN_CS = 6;     // 片选引脚
+    constexpr int PIN_RST = 7;    // 复位引脚
+}
 ```
 
 ## 故障排除
@@ -159,6 +217,56 @@ cfg.pin_rst = 7;    // 复位引脚
 1. 确保已安装 LovyanGFX 库
 2. 检查 PlatformIO 平台是否为最新版本
 3. 清理项目后重新编译：`pio run --target clean`
+4. 检查头文件包含路径是否正确
+
+## 扩展示例
+
+### 创建双眼动画
+
+```cpp
+// 在 main.cpp 中创建两个眼睛实例
+Eye leftEye, rightEye;
+EyeRenderer leftRenderer, rightRenderer;
+
+void setup() {
+  // 初始化两个渲染器
+  leftRenderer.begin(&display);
+  rightRenderer.begin(&display);
+}
+
+void loop() {
+  // 分别更新和渲染
+  leftEye.randomMove();
+  leftEye.updateMovement();
+  leftEye.updateBlink();
+
+  rightEye.randomMove();
+  rightEye.updateMovement();
+  rightEye.updateBlink();
+
+  // 渲染到不同区域
+  leftRenderer.render(leftEye);
+  rightRenderer.render(rightEye);
+}
+```
+
+### 自定义眼睛颜色
+
+通过修改 `Config.h` 轻松创建不同颜色的眼睛（蓝色、绿色等）：
+
+```cpp
+// 蓝色眼睛
+namespace ColorConfig {
+    constexpr uint16_t IRIS_COLOR = 0x1C9F;      // 蓝色虹膜
+    constexpr uint16_t IRIS_DETAIL = 0x3D5F;     // 浅蓝纹理
+}
+
+// 绿色眼睛
+namespace ColorConfig {
+    constexpr uint16_t IRIS_COLOR = 0x2E65;      // 绿色虹膜
+    constexpr uint16_t IRIS_DETAIL = 0x4F06;     // 浅绿纹理
+}
+```
 
 ## 参考资料
 
