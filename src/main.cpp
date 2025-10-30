@@ -9,6 +9,8 @@
 #include "eyes/beautiful/BeautifulEyeRenderer.h"
 #include "eyes/cyber/CyberEye.h"
 #include "eyes/cyber/CyberEyeRenderer.h"
+#include "eyes/cosmic/CosmicEye.h"
+#include "eyes/cosmic/CosmicEyeRenderer.h"
 #include "Config.h"
 
 // 眼睛类型枚举
@@ -16,7 +18,8 @@ enum EyeType {
   NORMAL_EYE = 0,
   DEMON_EYE = 1,
   BEAUTIFUL_EYE = 2,
-  CYBER_EYE = 3
+  CYBER_EYE = 3,
+  COSMIC_EYE = 4
 };
 
 // 全局对象
@@ -44,6 +47,10 @@ BeautifulEyeRenderer beautifulRenderer;
 // 赛博朋克眼睛对象
 CyberEye cyberEye;
 CyberEyeRenderer cyberRenderer;
+
+// 星空宇宙眼睛对象
+CosmicEye cosmicEye;
+CosmicEyeRenderer cosmicRenderer;
 
 // 按钮点击回调函数
 void onButtonClick() {
@@ -83,6 +90,18 @@ void onButtonClick() {
 
     // 立即渲染一次赛博眼睛
     cyberRenderer.render(cyberEye);
+  } else if (currentEyeType == CYBER_EYE) {
+    currentEyeType = COSMIC_EYE;
+    Serial.println("Switched to Cosmic Eye!");
+
+    // 重新初始化星空眼睛对象
+    cosmicEye = CosmicEye();
+
+    // 清空屏幕为深色宇宙背景
+    display.fillScreen(CosmicColorConfig::BG_COLOR);
+
+    // 立即渲染一次星空眼睛
+    cosmicRenderer.render(cosmicEye);
   } else {
     currentEyeType = NORMAL_EYE;
     Serial.println("Switched to Normal Eye!");
@@ -123,6 +142,7 @@ void setup() {
   demonRenderer.begin(sharedSprite);
   beautifulRenderer.begin(sharedSprite);
   cyberRenderer.begin(sharedSprite);
+  cosmicRenderer.begin(sharedSprite);
 
   // 配置按钮
   bootButton.attachClick(onButtonClick);
@@ -170,7 +190,7 @@ void loop() {
     beautifulRenderer.render(beautifulEye);
 
     delay(BeautifulEyeConfig::FRAME_DELAY);
-  } else {  // CYBER_EYE
+  } else if (currentEyeType == CYBER_EYE) {
     // 更新赛博眼球状态
     cyberEye.randomMove();
     cyberEye.updateMovement();
@@ -184,5 +204,20 @@ void loop() {
     cyberRenderer.render(cyberEye);
 
     delay(CyberEyeConfig::FRAME_DELAY);
+  } else {  // COSMIC_EYE
+    // 更新星空眼球状态
+    cosmicEye.randomMove();
+    cosmicEye.updateMovement();
+    cosmicEye.updateBlink();
+    cosmicEye.updateNebula();
+    cosmicEye.updateGalaxy();
+    cosmicEye.updateStars();
+    cosmicEye.updateMeteor();
+    cosmicEye.updatePulse();
+
+    // 渲染星空眼睛
+    cosmicRenderer.render(cosmicEye);
+
+    delay(CosmicEyeConfig::FRAME_DELAY);
   }
 }

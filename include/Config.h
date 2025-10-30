@@ -209,4 +209,40 @@ namespace CyberColorConfig {
     constexpr uint16_t CROSSHAIR_COLOR = 0xF800; // 红色准星
 }
 
+// 星空宇宙眼睛配置
+namespace CosmicEyeConfig {
+    constexpr float EYE_CENTER_X = 120.0f;
+    constexpr float EYE_CENTER_Y = 120.0f;
+    constexpr float IRIS_SIZE = 62.0f;          // 大型星云虹膜
+    constexpr float PUPIL_SIZE = 18.0f;         // 星系瞳孔
+    constexpr float MAX_PUPIL_MOVE = 25.0f;     // 柔和移动
+    constexpr float PUPIL_SMOOTH = 0.08f;       // 非常平滑
+
+    // 眨眼参数 - 神秘缓慢的眨眼
+    constexpr int BLINK_MIN_INTERVAL = 3500;
+    constexpr int BLINK_MAX_INTERVAL = 7000;
+    constexpr float BLINK_SPEED = 0.08f;        // 慢速眨眼
+
+    // 眼球运动参数 - 缓慢优雅
+    constexpr int MOVE_MIN_INTERVAL = 1000;
+    constexpr int MOVE_MAX_INTERVAL = 3500;
+    constexpr int MOVE_RANGE_X = 25;
+    constexpr int MOVE_RANGE_Y = 20;
+
+    // 渲染参数
+    constexpr int FRAME_DELAY = 50;  // 约20fps
+}
+
+// 星空宇宙眼睛颜色配置
+namespace CosmicColorConfig {
+    constexpr uint16_t BG_COLOR = 0x0008;        // 深宇宙背景(极深蓝)
+    constexpr uint16_t SCLERA_COLOR = 0x1084;    // 深紫灰巩膜
+    constexpr uint16_t IRIS_EDGE = 0x801F;       // 紫色虹膜边缘
+    constexpr uint16_t PUPIL_COLOR = 0x0000;     // 黑色瞳孔
+    constexpr uint16_t STAR_COLOR = 0xFFFF;      // 白色星星
+    constexpr uint16_t GLOW_COLOR = 0x841F;      // 紫蓝色发光
+    constexpr uint16_t EYELID_COLOR = 0x2010;    // 深紫色眼睑
+    constexpr uint16_t EYELID_EDGE = 0x4815;     // 紫色眼睑边缘
+}
+
 #endif // CONFIG_H
