@@ -2,7 +2,7 @@
 #define EYE_RENDERER_H
 
 #include <LovyanGFX.hpp>
-#include "Eye.h"
+#include "eyes/normal/Eye.h"
 #include "Config.h"
 
 // 眼睛渲染器类

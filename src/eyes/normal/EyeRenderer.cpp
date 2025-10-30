@@ -1,4 +1,4 @@
-#include "EyeRenderer.h"
+#include "eyes/normal/EyeRenderer.h"
 
 EyeRenderer::EyeRenderer() : sprite(nullptr) {}
 

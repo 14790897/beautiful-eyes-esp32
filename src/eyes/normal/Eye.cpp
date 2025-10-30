@@ -1,4 +1,4 @@
-#include "Eye.h"
+#include "eyes/normal/Eye.h"
 
 Eye::Eye() {
     eyeX = EyeConfig::EYE_CENTER_X;

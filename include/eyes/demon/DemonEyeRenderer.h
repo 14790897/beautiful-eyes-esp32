@@ -2,7 +2,7 @@
 #define DEMON_EYE_RENDERER_H
 
 #include <LovyanGFX.hpp>
-#include "DemonEye.h"
+#include "eyes/demon/DemonEye.h"
 #include "Config.h"
 
 // 魅魔眼睛渲染器类

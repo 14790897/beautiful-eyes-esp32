@@ -1,12 +1,12 @@
 #include <Arduino.h>
 #include <OneButton.h>
 #include "Display.h"
-#include "Eye.h"
-#include "EyeRenderer.h"
-#include "DemonEye.h"
-#include "DemonEyeRenderer.h"
-#include "BeautifulEye.h"
-#include "BeautifulEyeRenderer.h"
+#include "eyes/normal/Eye.h"
+#include "eyes/normal/EyeRenderer.h"
+#include "eyes/demon/DemonEye.h"
+#include "eyes/demon/DemonEyeRenderer.h"
+#include "eyes/beautiful/BeautifulEye.h"
+#include "eyes/beautiful/BeautifulEyeRenderer.h"
 #include "Config.h"
 
 // 眼睛类型枚举

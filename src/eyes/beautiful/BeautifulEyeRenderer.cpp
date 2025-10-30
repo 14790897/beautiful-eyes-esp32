@@ -1,4 +1,4 @@
-#include "BeautifulEyeRenderer.h"
+#include "eyes/beautiful/BeautifulEyeRenderer.h"
 
 BeautifulEyeRenderer::BeautifulEyeRenderer() : sprite(nullptr) {}
 

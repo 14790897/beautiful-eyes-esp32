@@ -1,4 +1,4 @@
-#include "BeautifulEye.h"
+#include "eyes/beautiful/BeautifulEye.h"
 
 BeautifulEye::BeautifulEye() {
     // 初始化位置

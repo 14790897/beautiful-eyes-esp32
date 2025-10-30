@@ -2,7 +2,7 @@
 #define BEAUTIFUL_EYE_RENDERER_H
 
 #include <LovyanGFX.hpp>
-#include "BeautifulEye.h"
+#include "eyes/beautiful/BeautifulEye.h"
 #include "Config.h"
 
 // 美丽女生眼睛渲染器类

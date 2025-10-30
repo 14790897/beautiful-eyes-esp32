@@ -1,4 +1,4 @@
-#include "DemonEye.h"
+#include "eyes/demon/DemonEye.h"
 
 DemonEye::DemonEye() {
     eyeX = DemonEyeConfig::EYE_CENTER_X;

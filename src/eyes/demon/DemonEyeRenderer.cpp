@@ -1,4 +1,4 @@
-#include "DemonEyeRenderer.h"
+#include "eyes/demon/DemonEyeRenderer.h"
 
 DemonEyeRenderer::DemonEyeRenderer() : sprite(nullptr) {}
 
