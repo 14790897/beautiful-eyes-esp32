@@ -1,0 +1,240 @@
+name: Release Firmware
+
+on:
+  release:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag (e.g., v1.0.0)'
+        required: true
+        type: string
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Cache PlatformIO
+      uses: actions/cache@v4
+      with:
+        path: ~/.platformio
+        key: ${{ runner.os }}-pio-${{ hashFiles('**/platformio.ini') }}
+        restore-keys: |
+          ${{ runner.os }}-pio-
+
+    - name: Install PlatformIO
+      run: |
+        python -m pip install --upgrade pip
+        pip install --upgrade platformio
+
+    - name: Build firmware (Release mode)
+      run: |
+        echo "Building release firmware..."
+        pio run
+
+    - name: Get version info
+      id: version
+      run: |
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          VERSION="${{ github.event.inputs.tag }}"
+        else
+          VERSION="${{ github.event.release.tag_name }}"
+        fi
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "commit=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        echo "date=$(date +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_OUTPUT
+
+    - name: Package release files
+      run: |
+        mkdir -p release
+
+        # 复制固件文件
+        cp .pio/build/airm2m_core_esp32c3/firmware.bin release/
+        cp .pio/build/airm2m_core_esp32c3/firmware.elf release/
+        cp .pio/build/airm2m_core_esp32c3/bootloader.bin release/
+        cp .pio/build/airm2m_core_esp32c3/partitions.bin release/
+
+        # 创建完整的烧录包
+        cd release
+
+        # 创建版本信息
+        cat > VERSION.txt << EOF
+        Beautiful Eyes Firmware
+        =======================
+        Version: ${{ steps.version.outputs.version }}
+        Commit: ${{ steps.version.outputs.commit }}
+        Build Date: ${{ steps.version.outputs.date }}
+        Target: ESP32-C3 (AirM2M Core)
+
+        Features:
+        - Normal Eye: Standard human eye animation
+        - Demon Eye: Demonic eye with vertical pupil and glow effect
+        - Beautiful Eye: Detailed feminine eye with makeup effects
+
+        Press BOOT button (GPIO9) to switch between eye types.
+        EOF
+
+        # 创建详细的烧录说明
+        cat > FLASH_GUIDE.md << EOF
+        # Beautiful Eyes Firmware Flash Guide
+
+        ## 版本信息
+        - 版本: ${{ steps.version.outputs.version }}
+        - 提交: ${{ steps.version.outputs.commit }}
+        - 日期: ${{ steps.version.outputs.date }}
+
+        ## 硬件要求
+        - ESP32-C3 开发板 (推荐: AirM2M Core ESP32-C3)
+        - ST7789 240x240 LCD 显示屏
+        - USB Type-C 数据线
+
+        ## 烧录方法
+
+        ### 方法 1: 使用 esptool.py (推荐)
+
+        1. 安装 esptool:
+        \`\`\`bash
+        pip install esptool
+        \`\`\`
+
+        2. 连接设备并查找串口:
+        - Windows: 通常是 \`COM3\`, \`COM4\`, \`COM5\` 等
+        - Linux/Mac: 通常是 \`/dev/ttyUSB0\` 或 \`/dev/ttyACM0\`
+
+        3. 烧录固件:
+        \`\`\`bash
+        esptool.py --chip esp32c3 --port COM5 --baud 460800 \\
+          --before default_reset --after hard_reset write_flash \\
+          0x0 bootloader.bin \\
+          0x8000 partitions.bin \\
+          0x10000 firmware.bin
+        \`\`\`
+
+        注意: 将 \`COM5\` 替换为你的实际串口
+
+        ### 方法 2: 使用 PlatformIO
+
+        1. 克隆仓库:
+        \`\`\`bash
+        git clone https://github.com/YOUR_USERNAME/beautiful-eyes.git
+        cd beautiful-eyes
+        \`\`\`
+
+        2. 烧录:
+        \`\`\`bash
+        pio run -t upload
+        \`\`\`
+
+        ### 方法 3: 使用 ESP Flash Download Tool (Windows)
+
+        1. 下载工具: https://www.espressif.com/en/support/download/other-tools
+        2. 配置如下:
+        - bootloader.bin @ 0x0
+        - partitions.bin @ 0x8000
+        - firmware.bin @ 0x10000
+        3. 选择 ESP32-C3, 波特率 460800
+        4. 点击 START 开始烧录
+
+        ## 使用说明
+
+        ### 按钮控制
+        - 按 BOOT 按钮 (GPIO9): 切换眼睛类型
+        - 切换顺序: 普通眼睛 → 魅魔眼睛 → 美丽女生眼睛 → (循环)
+
+        ### 眼睛类型
+
+        **1. 普通眼睛 (Normal Eye)**
+        - 标准的人类眼睛
+        - 棕色虹膜
+        - 自然的眨眼动画
+
+        **2. 魅魔眼睛 (Demon Eye)**
+        - 深色巩膜
+        - 红色虹膜
+        - 竖瞳
+        - 发光效果
+        - 心形高光
+
+        **3. 美丽女生眼睛 (Beautiful Eye)**
+        - 精致的眼妆效果
+        - 多层虹膜渐变
+        - 眼影、眼线
+        - 浓密睫毛
+        - 三重高光
+        - 闪亮动画
+
+        ## 故障排除
+
+        ### 烧录失败
+        - 确保设备已连接且驱动已安装
+        - 尝试降低波特率 (如 115200)
+        - 烧录前按住 BOOT 按钮
+
+        ### 屏幕无显示
+        - 检查 SPI 引脚连接
+        - 确认显示屏电源供应正常
+        - 查看串口输出的错误信息
+
+        ### 眼睛闭合不动
+        - 这是之前版本的 bug，当前版本已修复
+        - 重新烧录最新固件
+
+        ## 引脚定义
+
+        | 功能 | GPIO |
+        |------|------|
+        | SCLK | 2 |
+        | MOSI | 3 |
+        | DC   | 10 |
+        | CS   | 6 |
+        | RST  | 7 |
+        | BOOT | 9 |
+
+        ## 技术支持
+
+        如有问题请提交 Issue: https://github.com/YOUR_USERNAME/beautiful-eyes/issues
+        EOF
+
+        # 创建 checksums
+        sha256sum *.bin *.elf > SHA256SUMS.txt
+
+        # 打包所有文件
+        cd ..
+        zip -r beautiful-eyes-${{ steps.version.outputs.version }}.zip release/
+
+    - name: Upload to Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ steps.version.outputs.version }}
+        files: |
+          release/firmware.bin
+          release/firmware.elf
+          release/bootloader.bin
+          release/partitions.bin
+          release/VERSION.txt
+          release/FLASH_GUIDE.md
+          release/SHA256SUMS.txt
+          beautiful-eyes-${{ steps.version.outputs.version }}.zip
+        body_path: release/FLASH_GUIDE.md
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Show release info
+      run: |
+        echo "✅ Release ${{ steps.version.outputs.version }} created successfully!"
+        echo ""
+        echo "📦 Files included:"
+        ls -lh release/
+        echo ""
+        echo "🔗 Download URL: https://github.com/${{ github.repository }}/releases/tag/${{ steps.version.outputs.version }}"

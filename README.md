@@ -1,345 +1,268 @@
-# Beautiful Eyes
+# Beautiful Eyes - 嵌入式眼睛动画项目
 
-一个基于 ESP32-C3 和 GC9A01 圆形屏幕的动态眼睛动画项目，通过 LovyanGFX 库实现流畅的眼球运动、眨眼和虹膜细节渲染。支持普通人眼和魅魔眼睛两种风格。
+[![PlatformIO CI](https://github.com/YOUR_USERNAME/beautiful-eyes/actions/workflows/build.yml/badge.svg)](https://github.com/YOUR_USERNAME/beautiful-eyes/actions/workflows/build.yml)
+[![Release](https://img.shields.io/github/v/release/YOUR_USERNAME/beautiful-eyes)](https://github.com/YOUR_USERNAME/beautiful-eyes/releases)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-## 功能特性
+一个运行在 ESP32-C3 上的眼睛动画项目，支持多种风格的眼睛效果，包括普通眼睛、魅魔眼睛和美丽女生眼睛。
 
-### 普通眼睛
-- **逼真的眼睛渲染**：包含巩膜、虹膜、瞳孔、血管纹理和高光反射
-- **流畅的眼球运动**：平滑的瞳孔移动和随机注视行为
-- **自然的眨眼动画**：随机触发的眨眼效果，包含眼睑和睫毛
-- **细节渲染**：虹膜纹理、血管、高光、睫毛等细节元素
+## ✨ 特性
 
-### 魅魔眼睛 (NEW!)
-- **竖瞳设计**：猫科动物般的竖直瞳孔
-- **发光效果**：脉动的红色/品红发光光晕
-- **性感配色**：深红虹膜、黑色巩膜、火焰状纹理
-- **心形高光**：独特的心形反光效果
-- **浓密睫毛**：更长、更夸张的睫毛渲染
-- **快速反应**：更主动、更具侵略性的眼神移动
+### 三种眼睛风格
 
-### 通用特性
-- **高性能渲染**：使用 Sprite 双缓冲和 DMA 传输，达到约 20fps
-- **模块化架构**：清晰的代码结构，易于扩展和维护
-- **灵活配置**：集中式配置管理，轻松切换眼睛类型
+#### 1. 普通眼睛 (Normal Eye)
+- 白色眼白，棕色虹膜
+- 自然的眨眼动画
+- 简单的睫毛和血管纹理
+- 标准的眼球移动
 
-## 硬件要求
+#### 2. 魅魔眼睛 (Demon Eye)
+- 深灰色巩膜，红色虹膜
+- **竖瞳设计** - 猫科动物般的竖直瞳孔
+- **发光效果** - 脉动的发光光晕
+- **心形高光** - 独特的反光效果
+- 更快速、更主动的眼神移动
 
-- **MCU**: ESP32-C3 开发板（合宙 Air M2M Core ESP32-C3）
-- **显示屏**: GC9A01 240x240 圆形 TFT 屏幕
-- **接口**: SPI 通信
+#### 3. 美丽女生眼睛 (Beautiful Eye) 🆕
+- 纯净的眼白
+- **多层虹膜渐变** - 温柔的棕色渐变
+- **淡粉色眼影** - 精致的眼妆效果
+- **深棕色眼线** - 从眼头到眼尾的渐变眼线
+- **浓密睫毛** - 18根上睫毛 + 12根下睫毛
+- **三重高光** - 主高光、淡蓝色次高光、下方小高光
+- **闪亮动画** - 虹膜上的动态闪光点
+- 温柔优雅的眨眼动画
+
+### 真实动画效果
+- 自然的眨眼动画
+- 灵动的眼球移动
+- 精致的虹膜渐变
+- 多重高光效果
+
+### 简单交互
+- 按 BOOT 按钮 (GPIO9) 切换眼睛风格
+- 即按即切，无需重启
+
+## 🔧 硬件要求
+
+- **开发板**: ESP32-C3 (推荐: AirM2M Core ESP32-C3)
+- **显示屏**: ST7789 240x240 LCD
+- **数据线**: USB Type-C
 
 ### 引脚连接
 
-| 功能 | ESP32-C3 引脚 |
-|------|--------------|
-| SCK (时钟) | GPIO 2 |
-| MOSI (数据) | GPIO 3 |
-| DC (数据/命令) | GPIO 10 |
-| CS (片选) | GPIO 6 |
-| RST (复位) | GPIO 7 |
+| LCD 引脚 | ESP32-C3 GPIO |
+|---------|---------------|
+| SCLK    | 2             |
+| MOSI    | 3             |
+| DC      | 10            |
+| CS      | 6             |
+| RST     | 7             |
+| BOOT    | 9 (按钮)       |
 
-## 软件环境
+## 🚀 快速开始
 
-- **开发平台**: PlatformIO
-- **框架**: Arduino
-- **核心库**: LovyanGFX v1.1.16
-- **波特率**: 115200
+### 方法 1: 下载预编译固件 (推荐)
 
-## 快速开始
+1. 前往 [Releases](https://github.com/YOUR_USERNAME/beautiful-eyes/releases) 页面
+2. 下载最新版本的固件包
+3. 解压并按照 `FLASH_GUIDE.md` 说明烧录
 
-### 1. 安装 PlatformIO
+**使用 esptool 烧录:**
+```bash
+pip install esptool
 
-如果还未安装 PlatformIO，请参考 [官方文档](https://platformio.org/install)。
+esptool.py --chip esp32c3 --port COM5 --baud 460800 \
+  --before default_reset --after hard_reset write_flash \
+  0x0 bootloader.bin \
+  0x8000 partitions.bin \
+  0x10000 firmware.bin
+```
 
-### 2. 克隆项目
+### 方法 2: 从源码构建
+
+#### 前置要求
+- Python 3.7+
+- PlatformIO Core
+
+#### 构建步骤
 
 ```bash
-git clone <repository-url>
+# 克隆仓库
+git clone https://github.com/YOUR_USERNAME/beautiful-eyes.git
 cd beautiful-eyes
-```
 
-### 3. 连接硬件
+# 安装 PlatformIO
+pip install platformio
 
-按照上述引脚连接表，将 GC9A01 屏幕连接到 ESP32-C3 开发板。
+# 编译
+pio run
 
-### 4. 编译并上传
+# 编译并上传
+pio run -t upload
 
-```bash
-pio run --target upload
-```
-
-### 5. 查看串口输出（可选）
-
-```bash
+# 查看串口输出
 pio device monitor
 ```
 
-## 代码结构
-
-项目采用模块化设计，职责分离清晰：
-
-```
-beautiful-eyes/
-├── include/
-│   ├── Config.h            # 配置文件（硬件引脚、颜色、参数）
-│   ├── Display.h           # 显示屏配置类
-│   ├── Eye.h               # 普通眼睛数据和逻辑类
-│   ├── EyeRenderer.h       # 普通眼睛渲染器类
-│   ├── DemonEye.h          # 魅魔眼睛数据和逻辑类
-│   └── DemonEyeRenderer.h  # 魅魔眼睛渲染器类
-├── src/
-│   ├── Display.cpp         # 显示屏实现
-│   ├── Eye.cpp             # 普通眼睛逻辑实现
-│   ├── EyeRenderer.cpp     # 普通眼睛渲染实现
-│   ├── DemonEye.cpp        # 魅魔眼睛逻辑实现
-│   ├── DemonEyeRenderer.cpp# 魅魔眼睛渲染实现
-│   └── main.cpp            # 主程序入口（支持切换）
-├── lib/                    # 本地库目录
-├── platformio.ini          # PlatformIO 配置
-└── README.md              # 项目说明
-```
-
-## 架构设计
-
-### 模块职责
-
-#### 1. **Config.h** - 配置管理
-集中管理所有配置参数，便于调整：
-- `HardwareConfig`: 硬件引脚和 SPI 配置
-- `ColorConfig`: 普通眼睛颜色定义
-- `EyeConfig`: 普通眼睛参数
-- `DemonColorConfig`: 魅魔眼睛颜色定义
-- `DemonEyeConfig`: 魅魔眼睛参数（包含发光效果）
-
-#### 2. **Display** - 显示屏抽象层
-封装 GC9A01 屏幕的初始化和配置：
-- 继承自 `lgfx::LGFX_Device`
-- 配置 SPI 总线和面板参数
-- 提供简洁的 `begin()` 接口
-
-#### 3. **Eye / DemonEye** - 眼睛数据模型
-管理眼睛的状态和行为逻辑：
-- **普通眼睛 (Eye)**:
-  - 圆形瞳孔
-  - 标准眨眼速度
-  - 平滑眼球运动
-
-- **魅魔眼睛 (DemonEye)**:
-  - 竖直瞳孔（猫眼效果）
-  - 更慢、更性感的眨眼
-  - 更快速、更主动的移动
-  - 脉动发光效果 (`updateGlow()`)
-
-#### 4. **EyeRenderer / DemonEyeRenderer** - 渲染器
-负责将眼睛数据绘制到屏幕：
-- **普通眼睛渲染器**:
-  - 白色巩膜 + 棕色虹膜
-  - 圆形瞳孔 + 圆形高光
-  - 血管纹理
-
-- **魅魔眼睛渲染器**:
-  - 黑色巩膜 + 红色虹膜
-  - 竖直瞳孔 + 心形高光
-  - 发光光晕效果
-  - 火焰状虹膜纹理
-  - 更浓密夸张的睫毛
-
-#### 5. **main.cpp** - 主程序
-通过宏定义轻松切换眼睛类型：
-```cpp
-#define EYE_TYPE 0  // 0=普通眼睛, 1=魅魔眼睛
-```
-
-## 设计优势
-
-### 解耦与模块化
-- **单一职责**: 每个类只负责一个功能域
-- **低耦合**: 模块间通过接口通信，易于替换
-- **高内聚**: 相关功能集中在同一模块
-
-### 可维护性
-- **集中配置**: 所有参数在 `Config.h` 统一管理
-- **清晰分层**: 数据（Eye）与表现（Renderer）分离
-- **易于调试**: 可独立测试每个模块
-
-### 可扩展性
-- **添加新特性**: 如添加双眼只需创建两个 Eye 实例
-- **更换显示屏**: 只需修改 Display 类
-- **自定义渲染**: 继承 EyeRenderer 实现新风格
-- **新眼睛类型**: 按照 DemonEye 的模式轻松添加新类型（如龙眼、外星眼等）
-
-## 使用指南
+## 📖 使用说明
 
 ### 切换眼睛类型
 
-在 `src/main.cpp` 中修改宏定义：
+按下 **BOOT 按钮** (GPIO9) 循环切换:
 
-```cpp
-#define EYE_TYPE 0  // 0=普通眼睛
-#define EYE_TYPE 1  // 1=魅魔眼睛
+```
+普通眼睛 → 魅魔眼睛 → 美丽女生眼睛 → (循环)
 ```
 
-重新编译上传即可切换。
+串口会输出当前切换的眼睛类型。
 
-## 性能优化
+## 📁 项目结构
 
-1. **双缓冲技术**: 使用 `LGFX_Sprite` 在内存中完成所有绘制，最后一次性推送到屏幕
-2. **DMA 传输**: 利用 SPI DMA 通道进行高速数据传输（80MHz 写入频率）
-3. **16位色深**: 平衡色彩质量和传输速度
-4. **帧率控制**: 约 20fps 的刷新率，平衡流畅度和性能
-
-## 自定义配置
-
-得益于模块化设计，所有配置都集中在 `include/Config.h` 文件中。
-
-### 修改颜色
-
-在 `Config.h` 的 `ColorConfig` 命名空间中修改：
-
-```cpp
-namespace ColorConfig {
-    constexpr uint16_t IRIS_COLOR = 0x4208;      // 虹膜颜色
-    constexpr uint16_t PUPIL_COLOR = 0x0000;     // 瞳孔颜色
-    constexpr uint16_t EYELID_COLOR = 0xFBE4;    // 眼睑颜色
-    // ... 更多颜色配置
-}
+```
+beautiful-eyes/
+├── .github/
+│   └── workflows/          # GitHub Actions CI/CD
+│       ├── build.yml       # 自动构建工作流
+│       └── release.yml     # 版本发布工作流
+├── include/
+│   ├── eyes/               # 眼睛模块头文件
+│   │   ├── normal/         # 普通眼睛
+│   │   ├── demon/          # 魅魔眼睛
+│   │   └── beautiful/      # 美丽女生眼睛
+│   ├── Config.h            # 全局配置
+│   └── Display.h           # 显示驱动
+├── src/
+│   ├── eyes/               # 眼睛模块实现
+│   ├── Display.cpp
+│   └── main.cpp
+├── docs/
+│   ├── FILE_STRUCTURE.md   # 文件结构说明
+│   └── CI_CD_GUIDE.md      # CI/CD 指南
+└── platformio.ini          # PlatformIO 配置
 ```
 
-### 调整眼球参数
+详细说明: [FILE_STRUCTURE.md](docs/FILE_STRUCTURE.md)
 
-在 `Config.h` 的 `EyeConfig` 命名空间中修改：
+## 🔄 CI/CD
 
-```cpp
-namespace EyeConfig {
-    constexpr float IRIS_SIZE = 50.0f;           // 虹膜大小
-    constexpr float PUPIL_SIZE = 20.0f;          // 瞳孔大小
-    constexpr float MAX_PUPIL_MOVE = 25.0f;      // 瞳孔最大移动距离
-    constexpr int BLINK_MIN_INTERVAL = 2000;     // 最小眨眼间隔(ms)
-    constexpr int BLINK_MAX_INTERVAL = 5000;     // 最大眨眼间隔(ms)
-}
+本项目使用 GitHub Actions 实现自动化构建和发布:
+
+### 自动构建
+- ✅ 推送到 `main` 或 `dev` 分支时自动构建
+- ✅ Pull Request 时自动构建验证
+- ✅ 构建产物保留 30 天，可在 Actions 页面下载
+
+### 自动发布
+- ✅ 创建 Git Tag 自动触发发布流程
+- ✅ 自动生成完整的烧录指南
+- ✅ 自动打包固件、bootloader、分区表
+- ✅ 生成 SHA256 校验和
+
+### 如何发布新版本
+
+```bash
+# 创建版本标签
+git tag -a v1.0.0 -m "Release version 1.0.0"
+
+# 推送标签触发发布
+git push origin v1.0.0
 ```
 
-### 修改引脚连接
+详细说明请查看 [CI/CD 指南](docs/CI_CD_GUIDE.md)
 
-在 `Config.h` 的 `HardwareConfig` 命名空间中修改：
+## 🛠️ 开发指南
 
-```cpp
-namespace HardwareConfig {
-    constexpr int PIN_SCLK = 2;   // 时钟引脚
-    constexpr int PIN_MOSI = 3;   // 数据引脚
-    constexpr int PIN_DC = 10;    // 数据/命令引脚
-    constexpr int PIN_CS = 6;     // 片选引脚
-    constexpr int PIN_RST = 7;    // 复位引脚
-}
-```
+### 添加新的眼睛类型
 
-## 故障排除
+1. 在 `include/eyes/` 和 `src/eyes/` 创建新目录
+2. 创建眼睛数据类 (如 `NewEye.h/cpp`)
+3. 创建渲染器 (如 `NewEyeRenderer.h/cpp`)
+4. 在 `Config.h` 添加配置参数
+5. 在 `main.cpp` 集成新类型
 
-### 屏幕无显示
+详细步骤: [FILE_STRUCTURE.md](docs/FILE_STRUCTURE.md)
 
-1. 检查引脚连接是否正确
-2. 确认屏幕供电是否正常（通常为 3.3V）
-3. 查看串口输出是否有错误信息
+### 自定义配置
 
-### 显示闪烁
+编辑 `include/Config.h` 可修改:
+- 硬件引脚配置
+- 颜色配置
+- 动画参数(眨眼频率、移动速度等)
+- 睫毛数量和长度
 
-1. 尝试降低 SPI 频率（修改 `cfg.freq_write`）
-2. 检查供电是否稳定
-3. 确保使用了合适的电源（至少 500mA）
+### 代码规范
+
+- 使用完整的 include 路径: `#include "eyes/normal/Eye.h"`
+- 每种眼睛类型独立目录
+- 配置参数统一放在 `Config.h`
+
+## 🐛 故障排除
 
 ### 编译错误
-
-1. 确保已安装 LovyanGFX 库
-2. 检查 PlatformIO 平台是否为最新版本
-3. 清理项目后重新编译：`pio run --target clean`
-4. 检查头文件包含路径是否正确
-
-## 扩展示例
-
-### 示例 1: 切换到魅魔眼睛
-
-```cpp
-// src/main.cpp
-#define EYE_TYPE 1  // 切换为魅魔眼睛
+```bash
+# 清理构建缓存
+pio run -t clean
+# 重新构建
+pio run
 ```
 
-### 示例 2: 自定义魅魔眼睛颜色（紫色魅魔）
+### 烧录失败
+- 确保设备已连接且驱动已安装
+- 尝试按住 BOOT 按钮再烧录
+- 降低波特率: `pio run -t upload --upload-speed 115200`
 
-在 `include/Config.h` 中修改：
+### 屏幕无显示
+- 检查引脚连接是否正确
+- 验证显示屏电源供应
+- 查看串口输出: `pio device monitor`
 
-```cpp
-namespace DemonColorConfig {
-    constexpr uint16_t IRIS_COLOR = 0x8010;      // 紫色虹膜
-    constexpr uint16_t IRIS_OUTER = 0x5008;      // 深紫外圈
-    constexpr uint16_t IRIS_INNER = 0xA815;      // 亮紫内圈
-    constexpr uint16_t GLOW_COLOR = 0x801F;      // 紫蓝发光
-    constexpr uint16_t HIGHLIGHT_HEART = 0xFC1F; // 粉红心形高光
-}
-```
+### 眼睛闭合不动
+- 这是旧版本的 bug，已在最新版修复
+- 更新到最新固件即可
 
-### 示例 3: 调整魅魔眼睛行为
+## 📊 性能指标
 
-在 `include/Config.h` 中修改：
+- **RAM 使用**: 13 KB / 320 KB (4.0%)
+- **Flash 使用**: 385 KB / 1280 KB (29.4%)
+- **帧率**: ~20 FPS
+- **眨眼间隔**: 2-6秒 (可配置)
 
-```cpp
-namespace DemonEyeConfig {
-    constexpr float PUPIL_WIDTH = 10.0f;         // 更宽的竖瞳
-    constexpr float PUPIL_HEIGHT = 40.0f;        // 更长的竖瞳
-    constexpr int GLOW_INTENSITY = 20;           // 更强的发光
-    constexpr int BLINK_MIN_INTERVAL = 5000;     // 更少眨眼（更慑人）
-}
-```
+## 🤝 贡献
 
-### 示例 4: 创建双眼动画（左右眼不同类型）
+欢迎贡献! 步骤:
 
-```cpp
-// 在 main.cpp 中创建混合眼睛
-Eye leftEye;                    // 左眼：普通眼睛
-DemonEye rightEye;              // 右眼：魅魔眼睛
+1. Fork 本仓库
+2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 开启 Pull Request
 
-EyeRenderer leftRenderer;
-DemonEyeRenderer rightRenderer;
+## 📝 更新日志
 
-void setup() {
-  // 初始化两个渲染器...
-}
+查看 [Releases](https://github.com/YOUR_USERNAME/beautiful-eyes/releases) 获取完整更新日志。
 
-void loop() {
-  // 分别更新
-  leftEye.randomMove();
-  leftEye.updateMovement();
-  leftEye.updateBlink();
+### 最新更新
+- ✅ 添加美丽女生眼睛效果
+- ✅ 重构文件结构，模块化设计
+- ✅ 修复眼睛闭合不动的 bug
+- ✅ 添加 GitHub Actions CI/CD
 
-  rightEye.randomMove();
-  rightEye.updateMovement();
-  rightEye.updateBlink();
-  rightEye.updateGlow();
+## 📄 许可证
 
-  // 分别渲染
-  leftRenderer.render(leftEye);
-  rightRenderer.render(rightEye);
-}
-```
+本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 了解详情。
 
-## 参考资料
+## 🙏 致谢
 
-- [LovyanGFX 库文档](https://github.com/lovyan03/LovyanGFX)
-- [GC9A01 数据手册](https://www.buydisplay.com/download/ic/GC9A01A.pdf)
-- [ESP32-C3 技术规格](https://www.espressif.com/sites/default/files/documentation/esp32-c3_datasheet_en.pdf)
+- [LovyanGFX](https://github.com/lovyan03/LovyanGFX) - 强大的图形库
+- [OneButton](https://github.com/mathertel/OneButton) - 简单的按钮库
+- [PlatformIO](https://platformio.org/) - 优秀的构建系统
 
-## 许可证
+## 📧 联系方式
 
-本项目遵循 MIT 许可证。
-
-## 贡献
-
-欢迎提交 Issue 和 Pull Request！
-
-## 作者
-
-Beautiful Eyes Project
+- 提交 Issue: [GitHub Issues](https://github.com/YOUR_USERNAME/beautiful-eyes/issues)
+- 邮件: your.email@example.com
 
 ---
 
-**享受你的动态眼睛动画！**
+⭐ 如果这个项目对你有帮助，请给个 Star!
