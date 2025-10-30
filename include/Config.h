@@ -159,4 +159,54 @@ namespace BeautifulColorConfig {
     constexpr uint16_t SPARKLE_COLOR = 0xFFFF;   // 闪亮点(白色)
 }
 
+// 赛博朋克机械眼睛配置
+namespace CyberEyeConfig {
+    constexpr float EYE_CENTER_X = 120.0f;
+    constexpr float EYE_CENTER_Y = 120.0f;
+    constexpr float IRIS_SIZE = 60.0f;          // 大型机械虹膜
+    constexpr float PUPIL_SIZE = 15.0f;         // 小瞳孔(摄像头感)
+    constexpr float MAX_PUPIL_MOVE = 30.0f;     // 精确移动
+    constexpr float PUPIL_SMOOTH = 0.2f;        // 快速响应
+
+    // 眨眼参数 - 机械快速眨眼
+    constexpr int BLINK_MIN_INTERVAL = 3000;
+    constexpr int BLINK_MAX_INTERVAL = 8000;
+    constexpr float BLINK_SPEED = 0.25f;        // 快速眨眼
+
+    // 眼球运动参数 - 精确移动
+    constexpr int MOVE_MIN_INTERVAL = 600;
+    constexpr int MOVE_MAX_INTERVAL = 2000;
+    constexpr int MOVE_RANGE_X = 30;
+    constexpr int MOVE_RANGE_Y = 25;
+
+    // 扫描线参数
+    constexpr int SCAN_LINE_SPEED = 3;          // 扫描线移动速度
+    constexpr int SCAN_LINE_HEIGHT = 2;         // 扫描线高度
+
+    // HUD 参数
+    constexpr int HUD_UPDATE_INTERVAL = 100;    // HUD 更新间隔(ms)
+    constexpr int CROSSHAIR_SIZE = 20;          // 准星大小
+
+    // 渲染参数
+    constexpr int FRAME_DELAY = 50;  // 约20fps
+}
+
+// 赛博朋克机械眼睛颜色配置
+namespace CyberColorConfig {
+    constexpr uint16_t BG_COLOR = 0x0000;        // 黑色背景
+    constexpr uint16_t SCLERA_COLOR = 0x18C3;    // 深蓝灰色巩膜
+    constexpr uint16_t IRIS_COLOR = 0x07FF;      // 青色虹膜(Cyan)
+    constexpr uint16_t IRIS_OUTER = 0x05DF;      // 深青色外圈
+    constexpr uint16_t IRIS_INNER = 0x0FFF;      // 亮青色内圈
+    constexpr uint16_t IRIS_RING = 0x07E0;       // 绿色圆环
+    constexpr uint16_t PUPIL_COLOR = 0x0000;     // 黑色瞳孔
+    constexpr uint16_t SCAN_LINE_COLOR = 0x07FF; // 青色扫描线
+    constexpr uint16_t GRID_COLOR = 0x0410;      // 暗青色网格
+    constexpr uint16_t HUD_COLOR = 0x07E0;       // 绿色HUD
+    constexpr uint16_t HIGHLIGHT_COLOR = 0xFFFF; // 白色高光
+    constexpr uint16_t GLOW_COLOR = 0x07FF;      // 青色发光
+    constexpr uint16_t TEXT_COLOR = 0x07E0;      // 绿色文字
+    constexpr uint16_t CROSSHAIR_COLOR = 0xF800; // 红色准星
+}
+
 #endif // CONFIG_H

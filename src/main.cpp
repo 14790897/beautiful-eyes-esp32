@@ -7,13 +7,16 @@
 #include "eyes/demon/DemonEyeRenderer.h"
 #include "eyes/beautiful/BeautifulEye.h"
 #include "eyes/beautiful/BeautifulEyeRenderer.h"
+#include "eyes/cyber/CyberEye.h"
+#include "eyes/cyber/CyberEyeRenderer.h"
 #include "Config.h"
 
 // 眼睛类型枚举
 enum EyeType {
   NORMAL_EYE = 0,
   DEMON_EYE = 1,
-  BEAUTIFUL_EYE = 2
+  BEAUTIFUL_EYE = 2,
+  CYBER_EYE = 3
 };
 
 // 全局对象
@@ -37,6 +40,10 @@ DemonEyeRenderer demonRenderer;
 // 美丽女生眼睛对象
 BeautifulEye beautifulEye;
 BeautifulEyeRenderer beautifulRenderer;
+
+// 赛博朋克眼睛对象
+CyberEye cyberEye;
+CyberEyeRenderer cyberRenderer;
 
 // 按钮点击回调函数
 void onButtonClick() {
@@ -64,6 +71,18 @@ void onButtonClick() {
 
     // 立即渲染一次美丽眼睛
     beautifulRenderer.render(beautifulEye);
+  } else if (currentEyeType == BEAUTIFUL_EYE) {
+    currentEyeType = CYBER_EYE;
+    Serial.println("Switched to Cyber Eye!");
+
+    // 重新初始化赛博眼睛对象
+    cyberEye = CyberEye();
+
+    // 清空屏幕为黑色（赛博眼睛背景）
+    display.fillScreen(CyberColorConfig::BG_COLOR);
+
+    // 立即渲染一次赛博眼睛
+    cyberRenderer.render(cyberEye);
   } else {
     currentEyeType = NORMAL_EYE;
     Serial.println("Switched to Normal Eye!");
@@ -103,6 +122,7 @@ void setup() {
   normalRenderer.begin(sharedSprite);
   demonRenderer.begin(sharedSprite);
   beautifulRenderer.begin(sharedSprite);
+  cyberRenderer.begin(sharedSprite);
 
   // 配置按钮
   bootButton.attachClick(onButtonClick);
@@ -139,7 +159,7 @@ void loop() {
     demonRenderer.render(demonEye);
 
     delay(DemonEyeConfig::FRAME_DELAY);
-  } else {  // BEAUTIFUL_EYE
+  } else if (currentEyeType == BEAUTIFUL_EYE) {
     // 更新美丽女生眼球状态
     beautifulEye.randomMove();
     beautifulEye.updateMovement();
@@ -150,5 +170,19 @@ void loop() {
     beautifulRenderer.render(beautifulEye);
 
     delay(BeautifulEyeConfig::FRAME_DELAY);
+  } else {  // CYBER_EYE
+    // 更新赛博眼球状态
+    cyberEye.randomMove();
+    cyberEye.updateMovement();
+    cyberEye.updateBlink();
+    cyberEye.updateScanLine();
+    cyberEye.updateHUD();
+    cyberEye.updateGlow();
+    cyberEye.updateDataStream();
+
+    // 渲染赛博眼睛
+    cyberRenderer.render(cyberEye);
+
+    delay(CyberEyeConfig::FRAME_DELAY);
   }
 }
