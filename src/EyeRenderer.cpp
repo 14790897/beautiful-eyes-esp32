@@ -3,15 +3,11 @@
 EyeRenderer::EyeRenderer() : sprite(nullptr) {}
 
 EyeRenderer::~EyeRenderer() {
-    if (sprite) {
-        delete sprite;
-    }
+    // 不删除 sprite，因为它是共享的
 }
 
-void EyeRenderer::begin(lgfx::LGFX_Device* display) {
-    sprite = new LGFX_Sprite(display);
-    sprite->createSprite(HardwareConfig::SCREEN_WIDTH, HardwareConfig::SCREEN_HEIGHT);
-    sprite->setColorDepth(16);
+void EyeRenderer::begin(LGFX_Sprite* sharedSprite) {
+    sprite = sharedSprite;
 }
 
 void EyeRenderer::drawVeins(const Eye& eye) {

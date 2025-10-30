@@ -17,6 +17,9 @@ enum EyeType {
 Display display;
 OneButton bootButton(HardwareConfig::PIN_BOOT_BUTTON, true, true);
 
+// 共享的 sprite 用于节省内存
+LGFX_Sprite* sharedSprite = nullptr;
+
 // 当前眼睛类型
 EyeType currentEyeType = NORMAL_EYE;
 
@@ -63,9 +66,23 @@ void setup() {
   // 初始化显示屏
   display.begin();
 
-  // 初始化渲染器
-  normalRenderer.begin(&display);
-  demonRenderer.begin(&display);
+  // 创建共享的 sprite
+  sharedSprite = new LGFX_Sprite(&display);
+  bool created = sharedSprite->createSprite(HardwareConfig::SCREEN_WIDTH, HardwareConfig::SCREEN_HEIGHT);
+  sharedSprite->setColorDepth(16);
+
+  Serial.print("Shared sprite created: ");
+  Serial.println(created ? "SUCCESS" : "FAILED");
+  if (created) {
+    Serial.print("Sprite size: ");
+    Serial.print(sharedSprite->width());
+    Serial.print(" x ");
+    Serial.println(sharedSprite->height());
+  }
+
+  // 初始化渲染器（使用共享的 sprite）
+  normalRenderer.begin(sharedSprite);
+  demonRenderer.begin(sharedSprite);
 
   // 配置按钮
   bootButton.attachClick(onButtonClick);

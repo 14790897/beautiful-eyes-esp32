@@ -20,7 +20,7 @@ public:
     EyeRenderer();
     ~EyeRenderer();
 
-    void begin(lgfx::LGFX_Device* display);
+    void begin(LGFX_Sprite* sharedSprite);
     void render(const Eye& eye);
 };
 

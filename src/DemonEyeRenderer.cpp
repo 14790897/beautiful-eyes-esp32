@@ -1,27 +1,13 @@
 #include "DemonEyeRenderer.h"
 
-DemonEyeRenderer::DemonEyeRenderer() : sprite(nullptr), display(nullptr) {}
+DemonEyeRenderer::DemonEyeRenderer() : sprite(nullptr) {}
 
 DemonEyeRenderer::~DemonEyeRenderer() {
-    if (sprite) {
-        delete sprite;
-    }
+    // 不删除 sprite，因为它是共享的
 }
 
-void DemonEyeRenderer::begin(lgfx::LGFX_Device* disp) {
-    display = disp;  // 保存 display 指针
-    sprite = new LGFX_Sprite(display);
-    bool created = sprite->createSprite(HardwareConfig::SCREEN_WIDTH, HardwareConfig::SCREEN_HEIGHT);
-    sprite->setColorDepth(16);
-
-    Serial.print("DemonEye sprite created: ");
-    Serial.println(created ? "SUCCESS" : "FAILED");
-    if (created) {
-        Serial.print("Sprite size: ");
-        Serial.print(sprite->width());
-        Serial.print(" x ");
-        Serial.println(sprite->height());
-    }
+void DemonEyeRenderer::begin(LGFX_Sprite* sharedSprite) {
+    sprite = sharedSprite;
 }
 
 // 绘制发光效果
