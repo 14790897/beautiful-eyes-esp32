@@ -1,14 +1,27 @@
 # Beautiful Eyes
 
-一个基于 ESP32-C3 和 GC9A01 圆形屏幕的动态眼睛动画项目，通过 LovyanGFX 库实现流畅的眼球运动、眨眼和虹膜细节渲染。
+一个基于 ESP32-C3 和 GC9A01 圆形屏幕的动态眼睛动画项目，通过 LovyanGFX 库实现流畅的眼球运动、眨眼和虹膜细节渲染。支持普通人眼和魅魔眼睛两种风格。
 
 ## 功能特性
 
+### 普通眼睛
 - **逼真的眼睛渲染**：包含巩膜、虹膜、瞳孔、血管纹理和高光反射
 - **流畅的眼球运动**：平滑的瞳孔移动和随机注视行为
 - **自然的眨眼动画**：随机触发的眨眼效果，包含眼睑和睫毛
-- **高性能渲染**：使用 Sprite 双缓冲和 DMA 传输，达到约 20fps
 - **细节渲染**：虹膜纹理、血管、高光、睫毛等细节元素
+
+### 魅魔眼睛 (NEW!)
+- **竖瞳设计**：猫科动物般的竖直瞳孔
+- **发光效果**：脉动的红色/品红发光光晕
+- **性感配色**：深红虹膜、黑色巩膜、火焰状纹理
+- **心形高光**：独特的心形反光效果
+- **浓密睫毛**：更长、更夸张的睫毛渲染
+- **快速反应**：更主动、更具侵略性的眼神移动
+
+### 通用特性
+- **高性能渲染**：使用 Sprite 双缓冲和 DMA 传输，达到约 20fps
+- **模块化架构**：清晰的代码结构，易于扩展和维护
+- **灵活配置**：集中式配置管理，轻松切换眼睛类型
 
 ## 硬件要求
 
@@ -69,18 +82,22 @@ pio device monitor
 ```
 beautiful-eyes/
 ├── include/
-│   ├── Config.h          # 配置文件（硬件引脚、颜色、参数）
-│   ├── Display.h         # 显示屏配置类
-│   ├── Eye.h             # 眼睛数据和逻辑类
-│   └── EyeRenderer.h     # 眼睛渲染器类
+│   ├── Config.h            # 配置文件（硬件引脚、颜色、参数）
+│   ├── Display.h           # 显示屏配置类
+│   ├── Eye.h               # 普通眼睛数据和逻辑类
+│   ├── EyeRenderer.h       # 普通眼睛渲染器类
+│   ├── DemonEye.h          # 魅魔眼睛数据和逻辑类
+│   └── DemonEyeRenderer.h  # 魅魔眼睛渲染器类
 ├── src/
-│   ├── Display.cpp       # 显示屏实现
-│   ├── Eye.cpp           # 眼睛逻辑实现
-│   ├── EyeRenderer.cpp   # 渲染实现
-│   └── main.cpp          # 主程序入口（简洁）
-├── lib/                  # 本地库目录
-├── platformio.ini        # PlatformIO 配置
-└── README.md            # 项目说明
+│   ├── Display.cpp         # 显示屏实现
+│   ├── Eye.cpp             # 普通眼睛逻辑实现
+│   ├── EyeRenderer.cpp     # 普通眼睛渲染实现
+│   ├── DemonEye.cpp        # 魅魔眼睛逻辑实现
+│   ├── DemonEyeRenderer.cpp# 魅魔眼睛渲染实现
+│   └── main.cpp            # 主程序入口（支持切换）
+├── lib/                    # 本地库目录
+├── platformio.ini          # PlatformIO 配置
+└── README.md              # 项目说明
 ```
 
 ## 架构设计
@@ -90,8 +107,10 @@ beautiful-eyes/
 #### 1. **Config.h** - 配置管理
 集中管理所有配置参数，便于调整：
 - `HardwareConfig`: 硬件引脚和 SPI 配置
-- `ColorConfig`: 颜色定义（虹膜、瞳孔、眼睑等）
-- `EyeConfig`: 眼睛参数（大小、运动范围、眨眼间隔）
+- `ColorConfig`: 普通眼睛颜色定义
+- `EyeConfig`: 普通眼睛参数
+- `DemonColorConfig`: 魅魔眼睛颜色定义
+- `DemonEyeConfig`: 魅魔眼睛参数（包含发光效果）
 
 #### 2. **Display** - 显示屏抽象层
 封装 GC9A01 屏幕的初始化和配置：
@@ -99,34 +118,37 @@ beautiful-eyes/
 - 配置 SPI 总线和面板参数
 - 提供简洁的 `begin()` 接口
 
-#### 3. **Eye** - 眼睛数据模型
+#### 3. **Eye / DemonEye** - 眼睛数据模型
 管理眼睛的状态和行为逻辑：
-- **数据**: 位置、大小、眨眼进度
-- **行为**:
-  - `updateMovement()`: 平滑的瞳孔移动
-  - `updateBlink()`: 自动眨眼动画
-  - `randomMove()`: 随机注视点生成
-- **封装**: 私有数据，公开获取器
+- **普通眼睛 (Eye)**:
+  - 圆形瞳孔
+  - 标准眨眼速度
+  - 平滑眼球运动
 
-#### 4. **EyeRenderer** - 渲染器
+- **魅魔眼睛 (DemonEye)**:
+  - 竖直瞳孔（猫眼效果）
+  - 更慢、更性感的眨眼
+  - 更快速、更主动的移动
+  - 脉动发光效果 (`updateGlow()`)
+
+#### 4. **EyeRenderer / DemonEyeRenderer** - 渲染器
 负责将眼睛数据绘制到屏幕：
-- 使用 Sprite 双缓冲技术
-- 分层渲染：血管 → 虹膜 → 瞳孔 → 高光 → 眼睑
-- 细节方法：
-  - `drawVeins()`: 血管纹理
-  - `drawIrisDetail()`: 虹膜径向纹理
-  - `drawReflections()`: 高光反射
-  - `drawEyelashes()`: 睫毛
+- **普通眼睛渲染器**:
+  - 白色巩膜 + 棕色虹膜
+  - 圆形瞳孔 + 圆形高光
+  - 血管纹理
+
+- **魅魔眼睛渲染器**:
+  - 黑色巩膜 + 红色虹膜
+  - 竖直瞳孔 + 心形高光
+  - 发光光晕效果
+  - 火焰状虹膜纹理
+  - 更浓密夸张的睫毛
 
 #### 5. **main.cpp** - 主程序
-保持简洁，只负责组装和调度：
+通过宏定义轻松切换眼睛类型：
 ```cpp
-void loop() {
-  eye.randomMove();        // 生成运动目标
-  eye.updateMovement();    // 更新位置
-  eye.updateBlink();       // 更新眨眼
-  renderer.render(eye);    // 渲染到屏幕
-}
+#define EYE_TYPE 0  // 0=普通眼睛, 1=魅魔眼睛
 ```
 
 ## 设计优势
@@ -145,6 +167,20 @@ void loop() {
 - **添加新特性**: 如添加双眼只需创建两个 Eye 实例
 - **更换显示屏**: 只需修改 Display 类
 - **自定义渲染**: 继承 EyeRenderer 实现新风格
+- **新眼睛类型**: 按照 DemonEye 的模式轻松添加新类型（如龙眼、外星眼等）
+
+## 使用指南
+
+### 切换眼睛类型
+
+在 `src/main.cpp` 中修改宏定义：
+
+```cpp
+#define EYE_TYPE 0  // 0=普通眼睛
+#define EYE_TYPE 1  // 1=魅魔眼睛
+```
+
+重新编译上传即可切换。
 
 ## 性能优化
 
@@ -221,21 +257,56 @@ namespace HardwareConfig {
 
 ## 扩展示例
 
-### 创建双眼动画
+### 示例 1: 切换到魅魔眼睛
 
 ```cpp
-// 在 main.cpp 中创建两个眼睛实例
-Eye leftEye, rightEye;
-EyeRenderer leftRenderer, rightRenderer;
+// src/main.cpp
+#define EYE_TYPE 1  // 切换为魅魔眼睛
+```
+
+### 示例 2: 自定义魅魔眼睛颜色（紫色魅魔）
+
+在 `include/Config.h` 中修改：
+
+```cpp
+namespace DemonColorConfig {
+    constexpr uint16_t IRIS_COLOR = 0x8010;      // 紫色虹膜
+    constexpr uint16_t IRIS_OUTER = 0x5008;      // 深紫外圈
+    constexpr uint16_t IRIS_INNER = 0xA815;      // 亮紫内圈
+    constexpr uint16_t GLOW_COLOR = 0x801F;      // 紫蓝发光
+    constexpr uint16_t HIGHLIGHT_HEART = 0xFC1F; // 粉红心形高光
+}
+```
+
+### 示例 3: 调整魅魔眼睛行为
+
+在 `include/Config.h` 中修改：
+
+```cpp
+namespace DemonEyeConfig {
+    constexpr float PUPIL_WIDTH = 10.0f;         // 更宽的竖瞳
+    constexpr float PUPIL_HEIGHT = 40.0f;        // 更长的竖瞳
+    constexpr int GLOW_INTENSITY = 20;           // 更强的发光
+    constexpr int BLINK_MIN_INTERVAL = 5000;     // 更少眨眼（更慑人）
+}
+```
+
+### 示例 4: 创建双眼动画（左右眼不同类型）
+
+```cpp
+// 在 main.cpp 中创建混合眼睛
+Eye leftEye;                    // 左眼：普通眼睛
+DemonEye rightEye;              // 右眼：魅魔眼睛
+
+EyeRenderer leftRenderer;
+DemonEyeRenderer rightRenderer;
 
 void setup() {
-  // 初始化两个渲染器
-  leftRenderer.begin(&display);
-  rightRenderer.begin(&display);
+  // 初始化两个渲染器...
 }
 
 void loop() {
-  // 分别更新和渲染
+  // 分别更新
   leftEye.randomMove();
   leftEye.updateMovement();
   leftEye.updateBlink();
@@ -243,28 +314,11 @@ void loop() {
   rightEye.randomMove();
   rightEye.updateMovement();
   rightEye.updateBlink();
+  rightEye.updateGlow();
 
-  // 渲染到不同区域
+  // 分别渲染
   leftRenderer.render(leftEye);
   rightRenderer.render(rightEye);
-}
-```
-
-### 自定义眼睛颜色
-
-通过修改 `Config.h` 轻松创建不同颜色的眼睛（蓝色、绿色等）：
-
-```cpp
-// 蓝色眼睛
-namespace ColorConfig {
-    constexpr uint16_t IRIS_COLOR = 0x1C9F;      // 蓝色虹膜
-    constexpr uint16_t IRIS_DETAIL = 0x3D5F;     // 浅蓝纹理
-}
-
-// 绿色眼睛
-namespace ColorConfig {
-    constexpr uint16_t IRIS_COLOR = 0x2E65;      // 绿色虹膜
-    constexpr uint16_t IRIS_DETAIL = 0x4F06;     // 浅绿纹理
 }
 ```
 

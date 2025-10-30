@@ -13,6 +13,9 @@ namespace HardwareConfig {
     constexpr int PIN_CS = 6;
     constexpr int PIN_RST = 7;
 
+    // 按钮配置
+    constexpr int PIN_BOOT_BUTTON = 9;  // ESP32-C3 Boot 按钮引脚
+
     // SPI 频率
     constexpr int FREQ_WRITE = 80000000;
     constexpr int FREQ_READ = 16000000;
@@ -61,6 +64,50 @@ namespace EyeConfig {
 
     // 渲染参数
     constexpr int FRAME_DELAY = 50;  // 约20fps
+}
+
+// 魅魔眼睛配置
+namespace DemonEyeConfig {
+    constexpr float EYE_CENTER_X = 120.0f;
+    constexpr float EYE_CENTER_Y = 120.0f;
+    constexpr float IRIS_SIZE = 55.0f;          // 略大的虹膜
+    constexpr float PUPIL_WIDTH = 8.0f;         // 竖瞳宽度
+    constexpr float PUPIL_HEIGHT = 35.0f;       // 竖瞳高度
+    constexpr float MAX_PUPIL_MOVE = 30.0f;     // 更大的移动范围
+    constexpr float PUPIL_SMOOTH = 0.15f;       // 更快速的反应
+
+    // 眨眼参数 - 更慢、更性感的眨眼
+    constexpr int BLINK_MIN_INTERVAL = 3000;
+    constexpr int BLINK_MAX_INTERVAL = 7000;
+    constexpr float BLINK_SPEED = 0.1f;
+
+    // 眼球运动参数 - 更快速、更主动
+    constexpr int MOVE_MIN_INTERVAL = 500;
+    constexpr int MOVE_MAX_INTERVAL = 2000;
+    constexpr int MOVE_RANGE_X = 30;
+    constexpr int MOVE_RANGE_Y = 25;
+
+    // 发光效果参数
+    constexpr int GLOW_INTENSITY = 15;          // 发光强度
+    constexpr float GLOW_PULSE_SPEED = 0.05f;   // 脉动速度
+
+    // 渲染参数
+    constexpr int FRAME_DELAY = 50;  // 约20fps
+}
+
+// 魅魔眼睛颜色配置
+namespace DemonColorConfig {
+    constexpr uint16_t SCLERA_COLOR = 0x18E3;    // 深灰色巩膜（不是纯黑）
+    constexpr uint16_t IRIS_COLOR = 0xF800;      // 深红色虹膜
+    constexpr uint16_t IRIS_OUTER = 0xA000;      // 暗红色外圈
+    constexpr uint16_t IRIS_INNER = 0xFC00;      // 亮红色内圈
+    constexpr uint16_t IRIS_DETAIL = 0xFD20;     // 橙红色纹理
+    constexpr uint16_t PUPIL_COLOR = 0x0000;     // 黑色瞳孔
+    constexpr uint16_t GLOW_COLOR = 0xF81F;      // 品红色发光
+    constexpr uint16_t EYELID_COLOR = 0x8810;    // 深灰眼睑
+    constexpr uint16_t EYELID_SHADOW = 0x4208;   // 暗色阴影
+    constexpr uint16_t HIGHLIGHT_HEART = 0xF81F; // 心形高光（品红）
+    constexpr uint16_t EYELASH_COLOR = 0x0000;   // 黑色睫毛
 }
 
 #endif // CONFIG_H
