@@ -1,6 +1,6 @@
 #include "DemonEyeRenderer.h"
 
-DemonEyeRenderer::DemonEyeRenderer() : sprite(nullptr) {}
+DemonEyeRenderer::DemonEyeRenderer() : sprite(nullptr), display(nullptr) {}
 
 DemonEyeRenderer::~DemonEyeRenderer() {
     if (sprite) {
@@ -8,10 +8,20 @@ DemonEyeRenderer::~DemonEyeRenderer() {
     }
 }
 
-void DemonEyeRenderer::begin(lgfx::LGFX_Device* display) {
+void DemonEyeRenderer::begin(lgfx::LGFX_Device* disp) {
+    display = disp;  // 保存 display 指针
     sprite = new LGFX_Sprite(display);
-    sprite->createSprite(HardwareConfig::SCREEN_WIDTH, HardwareConfig::SCREEN_HEIGHT);
+    bool created = sprite->createSprite(HardwareConfig::SCREEN_WIDTH, HardwareConfig::SCREEN_HEIGHT);
     sprite->setColorDepth(16);
+
+    Serial.print("DemonEye sprite created: ");
+    Serial.println(created ? "SUCCESS" : "FAILED");
+    if (created) {
+        Serial.print("Sprite size: ");
+        Serial.print(sprite->width());
+        Serial.print(" x ");
+        Serial.println(sprite->height());
+    }
 }
 
 // 绘制发光效果
@@ -144,25 +154,28 @@ void DemonEyeRenderer::render(const DemonEye& eye) {
     float upperY = eye.getEyeY() - visibleHeight;
     float lowerY = eye.getEyeY() + visibleHeight;
 
-    // 调试：确保眼睛可见
-    if (visibleHeight > 5) {
-        // 绘制巩膜（黑色眼白）
-        sprite->fillEllipse(eye.getEyeX(), eye.getEyeY(), 90, visibleHeight, DemonColorConfig::SCLERA_COLOR);
+    // 调试：先画一个简单的测试图形
+    // 画一个红色圆圈在屏幕中心，确保渲染工作
+    sprite->fillCircle(120, 120, 60, 0xF800);  // 红色大圆
 
-        // 绘制发光效果
-        drawGlowEffect(eye);
+    if (visibleHeight > 5) {
+        // 绘制巩膜（深灰色眼白）
+        sprite->fillEllipse(eye.getEyeX(), eye.getEyeY(), 90, visibleHeight, DemonColorConfig::SCLERA_COLOR);
 
         // 绘制虹膜（红色圆形应该很明显）
         sprite->fillCircle(eye.getPupilX(), eye.getPupilY(), eye.getIrisSize(), DemonColorConfig::IRIS_COLOR);
 
-        // 绘制虹膜细节
-        drawIrisDetail(eye);
-
         // 绘制竖瞳
         drawVerticalPupil(eye);
 
+        // 绘制虹膜细节
+        drawIrisDetail(eye);
+
         // 绘制心形高光
         drawHeartHighlight(eye);
+
+        // 绘制发光效果
+        drawGlowEffect(eye);
 
         // 绘制眼睑（上下遮挡）
         if (upperY > 0) {

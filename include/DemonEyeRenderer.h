@@ -9,6 +9,7 @@
 class DemonEyeRenderer {
 private:
     LGFX_Sprite* sprite;
+    lgfx::LGFX_Device* display;  // 保存 display 指针用于直接绘制
 
     // 渲染细节方法
     void drawGlowEffect(const DemonEye& eye);
