@@ -3,7 +3,6 @@
 EyeRenderer::EyeRenderer() : sprite(nullptr) {}
 
 EyeRenderer::~EyeRenderer() {
-    // 不删除 sprite，因为它是共享的
 }
 
 void EyeRenderer::begin(LGFX_Sprite* sharedSprite) {
