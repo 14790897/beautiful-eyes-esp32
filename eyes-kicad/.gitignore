@@ -1,0 +1,76 @@
+# KiCad project files to ignore
+
+# Backup files
+*.bak
+*.bck
+*-bak
+*-cache.lib
+*-rescue.lib
+*-save.pro
+*-save.kicad_pcb
+*-save.kicad_sch
+*.kicad_pcb-bak
+*.kicad_sch-bak
+*.kicad_prl
+*.kicad_pro-bak
+
+# Temporary files
+*.000
+*.tmp
+*~
+_autosave-*
+*.swp
+*.swo
+
+# Netlist files
+*.net
+
+# Autorouter files
+*.dsn
+*.ses
+
+# Fabrication files (usually generated, uncomment if you want to track them)
+# *.gbr
+# *.drl
+# *.pos
+# *.rpt
+# *.csv
+
+# Gerber files (uncomment if you want to ignore them)
+# *-gerbers/
+# gerbers/
+
+# BOM files (Bill of Materials)
+# *.xml
+# *.csv
+
+# 3D models cache
+*.3dshapes/
+*.step
+*.stp
+*.wrl
+
+# Documentation output
+# *.pdf
+
+# OS specific files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE and editor files
+.vscode/
+.idea/
+*.sublime-*
+
+# Python virtual environment (if using KiCad plugins)
+venv/
+.env
+__pycache__/
+*.pyc
+*.pkl
+*.zip
+*cache
+# KiCad lock files
+*.lck
+*.lock

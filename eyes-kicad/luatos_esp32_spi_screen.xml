@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<export version="D">
+  <design>
+    <source>C:\git-program\kicad\airm2m.py</source>
+    <date>11/02/2025 09:26 PM</date>
+    <tool>SKiDL (2.1.1)</tool>
+  </design>
+  <components>
+    <comp ref="J1">
+      <value>"Conn_01x16"</value>
+      <footprint>Connector_PinSocket_2.54mm:PinSocket_1x16_P2.54mm_Vertical</footprint>
+      <libsource lib="Connector_Generic" part=""Conn_01x16""/>
+    </comp>
+    <comp ref="J2">
+      <value>"Conn_01x16"</value>
+      <footprint>Connector_PinSocket_2.54mm:PinSocket_1x16_P2.54mm_Vertical</footprint>
+      <libsource lib="Connector_Generic" part=""Conn_01x16""/>
+    </comp>
+    <comp ref="J3">
+      <value>"Conn_01x08"</value>
+      <footprint>Connector_PinSocket_2.54mm:PinSocket_1x08_P2.54mm_Vertical</footprint>
+      <libsource lib="Connector_Generic" part=""Conn_01x08""/>
+    </comp>
+  </components>
+  <nets>
+    <net code="0" name="3V3">
+      <node ref="J3" pin="2"/>
+      <node ref="J1" pin="13"/>
+    </net>
+    <net code="1" name="GND">
+      <node ref="J1" pin="14"/>
+      <node ref="J2" pin="16"/>
+      <node ref="J2" pin="9"/>
+      <node ref="J3" pin="1"/>
+      <node ref="J1" pin="7"/>
+      <node ref="J1" pin="1"/>
+      <node ref="J2" pin="1"/>
+    </net>
+    <net code="2" name="N$1">
+      <node ref="J2" pin="3"/>
+      <node ref="J3" pin="3"/>
+    </net>
+    <net code="3" name="N$2">
+      <node ref="J3" pin="4"/>
+      <node ref="J2" pin="4"/>
+    </net>
+    <net code="4" name="N$3">
+      <node ref="J2" pin="7"/>
+      <node ref="J3" pin="5"/>
+    </net>
+    <net code="5" name="N$4">
+      <node ref="J2" pin="5"/>
+      <node ref="J3" pin="6"/>
+    </net>
+    <net code="6" name="N$5">
+      <node ref="J3" pin="7"/>
+      <node ref="J2" pin="6"/>
+    </net>
+    <net code="7" name="N$6">
+      <node ref="J3" pin="8"/>
+      <node ref="J2" pin="8"/>
+    </net>
+  </nets>
+</export>
