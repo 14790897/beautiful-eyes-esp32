@@ -27,9 +27,8 @@ Display display(HardwareConfig::PIN_DC, HardwareConfig::PIN_CS, HardwareConfig::
 Display display2(HardwareConfig::PIN_DC2, HardwareConfig::PIN_CS2, HardwareConfig::PIN_RST2);
 OneButton bootButton(HardwareConfig::PIN_BOOT_BUTTON, true, true);
 
-// 共享的 sprite 用于节省内存
+// 共享的 sprite 用于节省内存 (两个屏幕共用一个sprite)
 LGFX_Sprite* sharedSprite = nullptr;
-LGFX_Sprite* sharedSprite2 = nullptr;
 
 // 当前眼睛类型
 EyeType currentEyeType = NORMAL_EYE;
@@ -131,32 +130,21 @@ void setup() {
   display.begin();
   display2.begin();
 
-  // 创建共享的 sprite (屏幕一)
+  // 创建共享的 sprite (只创建一个,两个屏幕共用以节省内存)
   sharedSprite = new LGFX_Sprite(&display);
   bool created = sharedSprite->createSprite(HardwareConfig::SCREEN_WIDTH, HardwareConfig::SCREEN_HEIGHT);
   sharedSprite->setColorDepth(16);
 
-  Serial.print("Shared sprite 1 created: ");
+  Serial.print("Shared sprite created: ");
   Serial.println(created ? "SUCCESS" : "FAILED");
   if (created) {
     Serial.print("Sprite size: ");
     Serial.print(sharedSprite->width());
     Serial.print(" x ");
     Serial.println(sharedSprite->height());
-  }
-
-  // 创建第二个 sprite (屏幕二)
-  sharedSprite2 = new LGFX_Sprite(&display2);
-  bool created2 = sharedSprite2->createSprite(HardwareConfig::SCREEN_WIDTH, HardwareConfig::SCREEN_HEIGHT);
-  sharedSprite2->setColorDepth(16);
-
-  Serial.print("Shared sprite 2 created: ");
-  Serial.println(created2 ? "SUCCESS" : "FAILED");
-  if (created2) {
-    Serial.print("Sprite size: ");
-    Serial.print(sharedSprite2->width());
-    Serial.print(" x ");
-    Serial.println(sharedSprite2->height());
+    Serial.print("Memory usage: ");
+    Serial.print((HardwareConfig::SCREEN_WIDTH * HardwareConfig::SCREEN_HEIGHT * 2) / 1024);
+    Serial.println(" KB (shared by both displays)");
   }
 
   // 初始化渲染器（使用共享的 sprite）
@@ -172,7 +160,7 @@ void setup() {
   bootButton.setClickMs(400);
 
   Serial.println("Press BOOT button (GPIO9) to switch eye type.");
-  Serial.println("Starting with Normal Eye.");
+  Serial.println("Starting with Normal Eye on both displays.");
 }
 
 void loop() {
