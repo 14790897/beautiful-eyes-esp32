@@ -23,11 +23,13 @@ enum EyeType {
 };
 
 // 全局对象
-Display display;
+Display display(HardwareConfig::PIN_DC, HardwareConfig::PIN_CS, HardwareConfig::PIN_RST);
+Display display2(HardwareConfig::PIN_DC2, HardwareConfig::PIN_CS2, HardwareConfig::PIN_RST2);
 OneButton bootButton(HardwareConfig::PIN_BOOT_BUTTON, true, true);
 
 // 共享的 sprite 用于节省内存
 LGFX_Sprite* sharedSprite = nullptr;
+LGFX_Sprite* sharedSprite2 = nullptr;
 
 // 当前眼睛类型
 EyeType currentEyeType = NORMAL_EYE;
@@ -61,8 +63,9 @@ void onButtonClick() {
     currentEyeType = DEMON_EYE;
     Serial.println("Switched to Demon Eye!");
 
-    // 清空屏幕为黑色（魅魔眼睛背景）
+    // 清空两个屏幕为黑色（魅魔眼睛背景）
     display.fillScreen(0x0000);
+    display2.fillScreen(0x0000);
 
     // 立即渲染一次魅魔眼睛
     demonRenderer.render(demonEye);
@@ -73,8 +76,9 @@ void onButtonClick() {
     // 重新初始化美丽眼睛对象,避免眨眼状态异常
     beautifulEye = BeautifulEye();
 
-    // 清空屏幕为白色（美丽眼睛背景）
+    // 清空两个屏幕为白色（美丽眼睛背景）
     display.fillScreen(BeautifulColorConfig::BG_COLOR);
+    display2.fillScreen(BeautifulColorConfig::BG_COLOR);
 
     // 立即渲染一次美丽眼睛
     beautifulRenderer.render(beautifulEye);
@@ -85,8 +89,9 @@ void onButtonClick() {
     // 重新初始化赛博眼睛对象
     cyberEye = CyberEye();
 
-    // 清空屏幕为黑色（赛博眼睛背景）
+    // 清空两个屏幕为黑色（赛博眼睛背景）
     display.fillScreen(CyberColorConfig::BG_COLOR);
+    display2.fillScreen(CyberColorConfig::BG_COLOR);
 
     // 立即渲染一次赛博眼睛
     cyberRenderer.render(cyberEye);
@@ -97,8 +102,9 @@ void onButtonClick() {
     // 重新初始化星空眼睛对象
     cosmicEye = CosmicEye();
 
-    // 清空屏幕为深色宇宙背景
+    // 清空两个屏幕为深色宇宙背景
     display.fillScreen(CosmicColorConfig::BG_COLOR);
+    display2.fillScreen(CosmicColorConfig::BG_COLOR);
 
     // 立即渲染一次星空眼睛
     cosmicRenderer.render(cosmicEye);
@@ -106,8 +112,9 @@ void onButtonClick() {
     currentEyeType = NORMAL_EYE;
     Serial.println("Switched to Normal Eye!");
 
-    // 清空屏幕为白色（普通眼睛背景）
+    // 清空两个屏幕为白色（普通眼睛背景）
     display.fillScreen(ColorConfig::BG_COLOR);
+    display2.fillScreen(ColorConfig::BG_COLOR);
 
     // 立即渲染一次普通眼睛
     normalRenderer.render(normalEye);
@@ -120,21 +127,36 @@ void setup() {
 
   Serial.println("\n=== Beautiful Eye Animation Started! ===");
 
-  // 初始化显示屏
+  // 初始化两个显示屏
   display.begin();
+  display2.begin();
 
-  // 创建共享的 sprite
+  // 创建共享的 sprite (屏幕一)
   sharedSprite = new LGFX_Sprite(&display);
   bool created = sharedSprite->createSprite(HardwareConfig::SCREEN_WIDTH, HardwareConfig::SCREEN_HEIGHT);
   sharedSprite->setColorDepth(16);
 
-  Serial.print("Shared sprite created: ");
+  Serial.print("Shared sprite 1 created: ");
   Serial.println(created ? "SUCCESS" : "FAILED");
   if (created) {
     Serial.print("Sprite size: ");
     Serial.print(sharedSprite->width());
     Serial.print(" x ");
     Serial.println(sharedSprite->height());
+  }
+
+  // 创建第二个 sprite (屏幕二)
+  sharedSprite2 = new LGFX_Sprite(&display2);
+  bool created2 = sharedSprite2->createSprite(HardwareConfig::SCREEN_WIDTH, HardwareConfig::SCREEN_HEIGHT);
+  sharedSprite2->setColorDepth(16);
+
+  Serial.print("Shared sprite 2 created: ");
+  Serial.println(created2 ? "SUCCESS" : "FAILED");
+  if (created2) {
+    Serial.print("Sprite size: ");
+    Serial.print(sharedSprite2->width());
+    Serial.print(" x ");
+    Serial.println(sharedSprite2->height());
   }
 
   // 初始化渲染器（使用共享的 sprite）
@@ -164,8 +186,11 @@ void loop() {
     normalEye.updateMovement();
     normalEye.updateBlink();
 
-    // 渲染普通眼睛
+    // 渲染普通眼睛到屏幕一
     normalRenderer.render(normalEye);
+
+    // 复制内容到屏幕二
+    sharedSprite->pushSprite(&display2, 0, 0);
 
     delay(EyeConfig::FRAME_DELAY);
   } else if (currentEyeType == DEMON_EYE) {
@@ -175,8 +200,11 @@ void loop() {
     demonEye.updateBlink();
     demonEye.updateGlow();
 
-    // 渲染魅魔眼睛
+    // 渲染魅魔眼睛到屏幕一
     demonRenderer.render(demonEye);
+
+    // 复制内容到屏幕二
+    sharedSprite->pushSprite(&display2, 0, 0);
 
     delay(DemonEyeConfig::FRAME_DELAY);
   } else if (currentEyeType == BEAUTIFUL_EYE) {
@@ -186,8 +214,11 @@ void loop() {
     beautifulEye.updateBlink();
     beautifulEye.updateSparkle();
 
-    // 渲染美丽眼睛
+    // 渲染美丽眼睛到屏幕一
     beautifulRenderer.render(beautifulEye);
+
+    // 复制内容到屏幕二
+    sharedSprite->pushSprite(&display2, 0, 0);
 
     delay(BeautifulEyeConfig::FRAME_DELAY);
   } else if (currentEyeType == CYBER_EYE) {
@@ -200,8 +231,11 @@ void loop() {
     cyberEye.updateGlow();
     cyberEye.updateDataStream();
 
-    // 渲染赛博眼睛
+    // 渲染赛博眼睛到屏幕一
     cyberRenderer.render(cyberEye);
+
+    // 复制内容到屏幕二
+    sharedSprite->pushSprite(&display2, 0, 0);
 
     delay(CyberEyeConfig::FRAME_DELAY);
   } else {  // COSMIC_EYE
@@ -215,8 +249,11 @@ void loop() {
     cosmicEye.updateMeteor();
     cosmicEye.updatePulse();
 
-    // 渲染星空眼睛
+    // 渲染星空眼睛到屏幕一
     cosmicRenderer.render(cosmicEye);
+
+    // 复制内容到屏幕二
+    sharedSprite->pushSprite(&display2, 0, 0);
 
     delay(CosmicEyeConfig::FRAME_DELAY);
   }

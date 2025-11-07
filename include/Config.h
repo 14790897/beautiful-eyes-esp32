@@ -5,13 +5,20 @@
 
 // 硬件引脚配置
 namespace HardwareConfig {
-    // SPI 配置
+    // SPI 配置 (共享)
     constexpr int PIN_SCLK = 2;
     constexpr int PIN_MOSI = 3;
     constexpr int PIN_MISO = -1;
+
+    // 屏幕一引脚
     constexpr int PIN_DC = 10;
     constexpr int PIN_CS = 6;
     constexpr int PIN_RST = 7;
+
+    // 屏幕二引脚
+    constexpr int PIN_DC2 = 1;
+    constexpr int PIN_CS2 = 0;
+    constexpr int PIN_RST2 = 4;
 
     // 按钮配置
     constexpr int PIN_BOOT_BUTTON = 9;  // ESP32-C3 Boot 按钮引脚

@@ -1,6 +1,6 @@
 #include "Display.h"
 
-Display::Display() {
+Display::Display(int pinDC, int pinCS, int pinRST) {
     // 配置 SPI 总线
     auto cfg = _bus_instance.config();
     cfg.spi_host = SPI2_HOST;
@@ -13,14 +13,14 @@ Display::Display() {
     cfg.pin_sclk = HardwareConfig::PIN_SCLK;
     cfg.pin_mosi = HardwareConfig::PIN_MOSI;
     cfg.pin_miso = HardwareConfig::PIN_MISO;
-    cfg.pin_dc = HardwareConfig::PIN_DC;
+    cfg.pin_dc = pinDC;  // 使用传入的DC引脚
     _bus_instance.config(cfg);
     _panel_instance.setBus(&_bus_instance);
 
     // 配置面板
     auto panelCfg = _panel_instance.config();
-    panelCfg.pin_cs = HardwareConfig::PIN_CS;
-    panelCfg.pin_rst = HardwareConfig::PIN_RST;
+    panelCfg.pin_cs = pinCS;  // 使用传入的CS引脚
+    panelCfg.pin_rst = pinRST;  // 使用传入的RST引脚
     panelCfg.pin_busy = -1;
     panelCfg.panel_width = HardwareConfig::SCREEN_WIDTH;
     panelCfg.panel_height = HardwareConfig::SCREEN_HEIGHT;
@@ -33,7 +33,7 @@ Display::Display() {
     panelCfg.invert = true;
     panelCfg.rgb_order = false;
     panelCfg.dlen_16bit = false;
-    panelCfg.bus_shared = false;
+    panelCfg.bus_shared = true;  // 改为true以支持共享SPI总线
     _panel_instance.config(panelCfg);
 
     setPanel(&_panel_instance);

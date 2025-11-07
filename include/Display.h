@@ -11,7 +11,7 @@ private:
     lgfx::Bus_SPI _bus_instance;
 
 public:
-    Display();
+    Display(int pinDC, int pinCS, int pinRST);
     void begin();
 };
 
