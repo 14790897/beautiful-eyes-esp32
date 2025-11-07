@@ -1,8 +1,15 @@
 {
-    "files.exclude": {
-        "**/*.rpyc": true,
-        "**/*.rpa": true,
-        "**/*.rpymc": true,
-        "**/cache/": true
-    }
+  "files.exclude": {
+    "**/*.rpyc": true,
+    "**/*.rpa": true,
+    "**/*.rpymc": true,
+    "**/cache/": true
+  },
+  "python.defaultInterpreterPath": "C:\\Program Files\\KiCad\\9.0\\bin\\python.exe",
+  "python.terminal.activateEnvironment": false,
+
+  "terminal.integrated.env.windows": {
+    "Path": "C:\\Program Files\\KiCad\\9.0\\bin;${env:Path}"
+  }
 }
+// & "C:\Program Files\KiCad\9.0\bin\python.exe" -m pip install skidl kinet2pcb

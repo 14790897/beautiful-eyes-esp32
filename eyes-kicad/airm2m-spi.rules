@@ -16,13 +16,13 @@
       (active on)
       (preferred_direction horizontal)
       (preferred_direction_trace_costs 1.0)
-      (against_preferred_direction_trace_costs 3.8)
+      (against_preferred_direction_trace_costs 4.2)
     )
     (layer_rule B.Cu
       (active on)
       (preferred_direction vertical)
       (preferred_direction_trace_costs 1.0)
-      (against_preferred_direction_trace_costs 3.3)
+      (against_preferred_direction_trace_costs 3.1)
     )
   )
   (rule
@@ -64,7 +64,8 @@
     )
   )
   (class "kicad_default"
-    3V3 N$6 GND N$4 N$5 N$1 N$2 N$3
+    GND 3V3 N$6 N$4 N$5 N$1 N$2 N$3
+    N$7 N$8 "SPI_MOSI" "SPI_SCLK"
     (clearance_class "kicad_default")
     (via_rule "kicad_default")
     (rule

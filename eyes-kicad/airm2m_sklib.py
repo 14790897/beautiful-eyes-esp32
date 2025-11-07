@@ -22,7 +22,7 @@ airm2m = SchLib(tool=SKIDL).add_parts(*[
             Pin(num='13',name='Pin_13',func=pin_types.PASSIVE,unit=1),
             Pin(num='14',name='Pin_14',func=pin_types.PASSIVE,unit=1),
             Pin(num='15',name='Pin_15',func=pin_types.PASSIVE,unit=1),
-            Pin(num='16',name='Pin_16',func=pin_types.PASSIVE,unit=1)], 'unit_defs':[] }),
+            Pin(num='16',name='Pin_16',func=pin_types.PASSIVE,unit=1)] }),
         Part(**{ 'name':'Conn_01x08', 'dest':TEMPLATE, 'tool':SKIDL, 'aliases':Alias({'Conn_01x08'}), 'ref_prefix':'J', 'fplist':[''], 'footprint':'Connector_PinSocket_2.54mm:PinSocket_1x08_P2.54mm_Vertical', 'keywords':'connector', 'description':'Generic connector, single row, 01x08, script generated (kicad-library-utils/schlib/autogen/connector/)', 'datasheet':'~', 'pins':[
             Pin(num='1',name='Pin_1',func=pin_types.PASSIVE,unit=1),
             Pin(num='2',name='Pin_2',func=pin_types.PASSIVE,unit=1),
@@ -31,4 +31,4 @@ airm2m = SchLib(tool=SKIDL).add_parts(*[
             Pin(num='5',name='Pin_5',func=pin_types.PASSIVE,unit=1),
             Pin(num='6',name='Pin_6',func=pin_types.PASSIVE,unit=1),
             Pin(num='7',name='Pin_7',func=pin_types.PASSIVE,unit=1),
-            Pin(num='8',name='Pin_8',func=pin_types.PASSIVE,unit=1)], 'unit_defs':[] })])
+            Pin(num='8',name='Pin_8',func=pin_types.PASSIVE,unit=1)] })])

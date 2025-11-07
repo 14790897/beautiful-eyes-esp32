@@ -1,12 +1,20 @@
-import os
+import os,sys
 
 # esp32c3使用的引脚：
-#     constexpr int PIN_SCLK = 2;
-#     constexpr int PIN_MOSI = 3;
-#     constexpr int PIN_MISO = -1;
-#     constexpr int PIN_DC = 10;
-#     constexpr int PIN_CS = 6;
-#     constexpr int PIN_RST = 7;
+# 共享SPI总线引脚：
+#     constexpr int PIN_SCLK = 2;  # GPIO2 - 共享
+#     constexpr int PIN_MOSI = 3;  # GPIO3 - 共享
+#     constexpr int PIN_MISO = -1; # 未使用
+#
+# 屏幕1（左眼）：
+#     constexpr int PIN_DC = 10;   # GPIO10
+#     constexpr int PIN_CS = 6;    # GPIO6
+#     constexpr int PIN_RST = 7;   # GPIO7
+#
+# 屏幕2（右眼）：
+#     constexpr int PIN_DC2 = 1;   # GPIO1
+#     constexpr int PIN_CS2 = 0;   # GPIO0
+#     constexpr int PIN_RST2 = 4;  # GPIO4
 # esp32c3左边从上到下是1-16，右边是17-32
 # <tbody>
 # <tr class="row-even"><td><p>32</p></td>
@@ -241,6 +249,7 @@ import os
 
 
 from skidl import *
+import kinet2pcb 
 
 # -----------------------------------------------------------------
 # 1. 重置 SKiDL
@@ -251,25 +260,25 @@ print("SKiDL 已重置。")
 # -----------------------------------------------------------------
 # 解决方案：添加 KiCad 9.0 的【符号】和【封装】路径
 # -----------------------------------------------------------------
-kicad_path_base = r"C:\Program Files\KiCad\9.0\share\kicad"
+# kicad_path_base = r"C:\Program Files\KiCad\9.0\share\kicad"
 
-# 添加符号库路径
-k_sym_path = os.path.join(kicad_path_base, "symbols")
-if os.path.exists(k_sym_path):
-    # 修正：使用 = [path] 来创建一个新列表，而不是 .append()
-    lib_search_paths[KICAD] = [k_sym_path]
-    print(f"已设置 KiCad 符号库路径: {k_sym_path}")
-else:
-    print(f"!!! 警告: 符号库路径不存在: {k_sym_path}")
+# # 添加符号库路径
+# k_sym_path = os.path.join(kicad_path_base, "symbols")
+# if os.path.exists(k_sym_path):
+#     # 修正：使用 = [path] 来创建一个新列表，而不是 .append()
+#     lib_search_paths[KICAD] = [k_sym_path]
+#     print(f"已设置 KiCad 符号库路径: {k_sym_path}")
+# else:
+#     print(f"!!! 警告: 符号库路径不存在: {k_sym_path}")
 
-# 添加封装库路径 (修复 fp-lib-table 警告)
-k_fp_path = os.path.join(kicad_path_base, "footprints")
-if os.path.exists(k_fp_path):
-    # 修正：同样使用 = [path] 来创建新列表，解决 'str' object has no attribute 'append' 错误
-    footprint_search_paths[KICAD] = [k_fp_path]
-    print(f"已设置 KiCad 封装库路径: {k_fp_path}")
-else:
-    print(f"!!! 警告: 封装库路径不存在: {k_fp_path}")
+# # 添加封装库路径 (修复 fp-lib-table 警告)
+# k_fp_path = os.path.join(kicad_path_base, "footprints")
+# if os.path.exists(k_fp_path):
+#     # 修正：同样使用 = [path] 来创建新列表，解决 'str' object has no attribute 'append' 错误
+#     footprint_search_paths[KICAD] = [k_fp_path]
+#     print(f"已设置 KiCad 封装库路径: {k_fp_path}")
+# else:
+#     print(f"!!! 警告: 封装库路径不存在: {k_fp_path}")
 # -----------------------------------------------------------------
 
 # -----------------------------------------------------------------
@@ -286,10 +295,15 @@ try:
     board_right.footprint = "Connector_PinSocket_2.54mm:PinSocket_1x16_P2.54mm_Vertical"
 
     # --- SPI 屏幕 (同样使用母头插座) ---
-    spi_screen = Part(LIB_CONN, "Conn_01x08")  # 1x8 single-row connector symbol
-    spi_screen.footprint = "Connector_PinSocket_2.54mm:PinSocket_1x08_P2.54mm_Vertical"
+    spi_screen1 = Part(LIB_CONN, "Conn_01x08")  # 1x8 single-row connector symbol (左眼)
+    spi_screen1.footprint = "Connector_PinSocket_2.54mm:PinSocket_1x08_P2.54mm_Vertical"
+    spi_screen1.ref = "J3"
 
-    print("✓ 元器件定义完毕 (全部使用 PinSocket 母座)")
+    spi_screen2 = Part(LIB_CONN, "Conn_01x08")  # 1x8 single-row connector symbol (右眼)
+    spi_screen2.footprint = "Connector_PinSocket_2.54mm:PinSocket_1x08_P2.54mm_Vertical"
+    spi_screen2.ref = "J4"
+
+    print("✓ 元器件定义完毕 (全部使用 PinSocket 母座，包括两个屏幕)")
 
 except (ValueError, FileNotFoundError) as e:
     print(f"✗ 错误: {e}")
@@ -317,33 +331,63 @@ gnd += board_right[16]  # 物理引脚 32 (右侧第16脚)
 # --- 连接屏幕的电源 (根据新的屏幕引脚顺序) ---
 # Pin 1 = gnd
 # Pin 2 = vcc
-gnd += spi_screen[1]
-vcc += spi_screen[2]
+gnd += spi_screen1[1]
+vcc += spi_screen1[2]
 
-print("✓ 电源连接完毕。")
+gnd += spi_screen2[1]
+vcc += spi_screen2[2]
+
+print("✓ 电源连接完毕（两个屏幕）。")
 
 # -----------------------------------------------------------------
-# 4. 【已修改】定义并连接 SPI 和控制引脚 (根据新的注释)
+# 4. 【已修改】定义并连接 SPI 和控制引脚 (两个屏幕共享SPI总线)
 # -----------------------------------------------------------------
-print("正在连接 SPI 和控制引脚 (根据新的引脚定义)...")
+print("正在连接 SPI 和控制引脚 (两个屏幕共享SPI总线)...")
 
-# 目标: 屏幕引脚 -> ESP32 GPIO -> 物理引脚 -> SKiDL 引脚
+# 共享的SPI总线信号（两个屏幕共用）:
 # ----------------------------------------------------------------
 # SCL (Pin 3) -> GPIO2  -> 物理 Pin 19 -> board_right[3]
 # SDA (Pin 4) -> GPIO3  -> 物理 Pin 20 -> board_right[4]
+
+spi_sclk = Net("SPI_SCLK")
+spi_mosi = Net("SPI_MOSI")
+
+spi_sclk += board_right[3]  # GPIO2 (Pin 19)
+spi_mosi += board_right[4]  # GPIO3 (Pin 20)
+
+# 屏幕1（左眼）的连接:
+# ----------------------------------------------------------------
+# SCL (Pin 3) -> GPIO2  (共享)
+# SDA (Pin 4) -> GPIO3  (共享)
 # RES (Pin 5) -> GPIO7  -> 物理 Pin 23 -> board_right[7]
 # DC  (Pin 6) -> GPIO10 -> 物理 Pin 21 -> board_right[5]
 # CS  (Pin 7) -> GPIO6  -> 物理 Pin 22 -> board_right[6]
 # BLK (Pin 8) -> GPIO11 -> 物理 Pin 24 -> board_right[8]
 
-spi_screen[3] += board_right[3]  # SCL (Pin 19 / GPIO2)
-spi_screen[4] += board_right[4]  # SDA/MOSI (Pin 20 / GPIO3)
-spi_screen[5] += board_right[7]  # RES (Pin 23 / GPIO7)
-spi_screen[6] += board_right[5]  # DC (Pin 21 / GPIO10)
-spi_screen[7] += board_right[6]  # CS (Pin 22 / GPIO6)
-spi_screen[8] += board_right[8]  # BLK (Pin 24 / GPIO11)
+spi_screen1[3] += spi_sclk        # SCL (共享)
+spi_screen1[4] += spi_mosi        # SDA/MOSI (共享)
+spi_screen1[5] += board_right[7]  # RES (Pin 23 / GPIO7)
+spi_screen1[6] += board_right[5]  # DC (Pin 21 / GPIO10)
+spi_screen1[7] += board_right[6]  # CS (Pin 22 / GPIO6)
+spi_screen1[8] += board_right[8]  # BLK (Pin 24 / GPIO11)
 
-print("✓ SPI 引脚连接完毕。")
+# 屏幕2（右眼）的连接:
+# ----------------------------------------------------------------
+# SCL (Pin 3) -> GPIO2  (共享)
+# SDA (Pin 4) -> GPIO3  (共享)
+# RES (Pin 5) -> GPIO4  -> 物理 Pin 28 -> board_right[12]
+# DC  (Pin 6) -> GPIO1  -> 物理 Pin 03 -> board_left[3]
+# CS  (Pin 7) -> GPIO0  -> 物理 Pin 02 -> board_left[2]
+# BLK (Pin 8) -> GPIO8  -> 物理 Pin 29 -> board_right[13]
+
+spi_screen2[3] += spi_sclk         # SCL (共享)
+spi_screen2[4] += spi_mosi         # SDA/MOSI (共享)
+spi_screen2[5] += board_right[12]  # RES (Pin 28 / GPIO4)
+spi_screen2[6] += board_left[3]    # DC (Pin 03 / GPIO1)
+spi_screen2[7] += board_left[2]    # CS (Pin 02 / GPIO0)
+spi_screen2[8] += board_right[13]  # BLK (Pin 29 / GPIO8)
+
+print("✓ SPI 引脚连接完毕（两个屏幕共享SCLK和MOSI）。")
 
 # -----------------------------------------------------------------
 # 5. 【新】在 SKIDL 中定义物理位置
@@ -360,11 +404,14 @@ board_right.pos = (118, 100)
 # board_right.pos.unit = "MM"  # 确保单位是毫米
 # board_left.pos.unit = "MM"  # 确保单位是毫米
 
-spi_screen.pos = (109, 90)
-# spi_screen.pos.unit = "MM"  
-print(f"  - J1 (left)  位置: {board_left.pos}")
-print(f"  - J2 (right) 位置: {board_right.pos} (间距 18mm)")
-print(f"  - J3 (screen)位置: {spi_screen.pos}")
+spi_screen1.pos = (100, 90)  # 左眼屏幕
+spi_screen2.pos = (118, 90)  # 右眼屏幕
+# spi_screen1.pos.unit = "MM"
+# spi_screen2.pos.unit = "MM"
+print(f"  - J1 (left)    位置: {board_left.pos}")
+print(f"  - J2 (right)   位置: {board_right.pos} (间距 18mm)")
+print(f"  - J3 (screen1) 位置: {spi_screen1.pos} (左眼)")
+print(f"  - J4 (screen2) 位置: {spi_screen2.pos} (右眼)")
 
 # -----------------------------------------------------------------
 # 6. 生成网表 (Netlist) (脚本的其余部分保持不变)
