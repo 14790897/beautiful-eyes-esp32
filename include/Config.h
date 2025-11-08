@@ -252,4 +252,49 @@ namespace CosmicColorConfig {
     constexpr uint16_t EYELID_EDGE = 0x4815;     // 紫色眼睑边缘
 }
 
+// 显轮眼配置 (Sharingan)
+namespace WheelEyeConfig {
+    constexpr float EYE_CENTER_X = 120.0f;
+    constexpr float EYE_CENTER_Y = 120.0f;
+    constexpr float IRIS_SIZE = 65.0f;          // 大型虹膜
+    constexpr float PUPIL_SIZE = 18.0f;         // 适中瞳孔
+    constexpr float MAX_PUPIL_MOVE = 28.0f;     // 锐利的移动
+    constexpr float PUPIL_SMOOTH = 0.15f;       // 快速反应
+
+    // 眨眼参数 - 凌厉快速的眨眼
+    constexpr int BLINK_MIN_INTERVAL = 2500;
+    constexpr int BLINK_MAX_INTERVAL = 6000;
+    constexpr float BLINK_SPEED = 0.2f;         // 快速眨眼
+
+    // 眼球运动参数 - 敏锐警觉
+    constexpr int MOVE_MIN_INTERVAL = 700;
+    constexpr int MOVE_MAX_INTERVAL = 2200;
+    constexpr int MOVE_RANGE_X = 28;
+    constexpr int MOVE_RANGE_Y = 24;
+
+    // 勾玉参数
+    constexpr int TOMOE_COUNT = 3;              // 勾玉数量(三勾玉)
+    constexpr float TOMOE_DISTANCE = 30.0f;     // 勾玉距离中心的距离
+    constexpr float TOMOE_SIZE = 12.0f;         // 勾玉大小
+    constexpr float ROTATION_SPEED = 0.02f;     // 旋转速度
+
+    // 渲染参数
+    constexpr int FRAME_DELAY = 50;  // 约20fps
+}
+
+// 显轮眼颜色配置
+namespace WheelColorConfig {
+    constexpr uint16_t BG_COLOR = 0xFFFF;        // 白色背景
+    constexpr uint16_t SCLERA_COLOR = 0xFFFF;    // 纯白巩膜
+    constexpr uint16_t IRIS_COLOR = 0xF800;      // 鲜红色虹膜
+    constexpr uint16_t IRIS_OUTER = 0xC000;      // 深红外圈
+    constexpr uint16_t IRIS_INNER = 0xF980;      // 橙红内圈
+    constexpr uint16_t PUPIL_COLOR = 0x0000;     // 黑色瞳孔
+    constexpr uint16_t TOMOE_COLOR = 0x0000;     // 黑色勾玉
+    constexpr uint16_t WHEEL_LINE_COLOR = 0x0000;// 黑色轮廓线
+    constexpr uint16_t EYELID_COLOR = 0xFBE4;    // 皮肤色眼睑
+    constexpr uint16_t HIGHLIGHT_COLOR = 0xFFFF; // 白色高光
+    constexpr uint16_t GLOW_COLOR = 0xF800;      // 红色发光
+}
+
 #endif // CONFIG_H

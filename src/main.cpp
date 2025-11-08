@@ -11,6 +11,8 @@
 #include "eyes/cyber/CyberEyeRenderer.h"
 #include "eyes/cosmic/CosmicEye.h"
 #include "eyes/cosmic/CosmicEyeRenderer.h"
+#include "eyes/wheel/WheelEye.h"
+#include "eyes/wheel/WheelEyeRenderer.h"
 #include "Config.h"
 
 // 眼睛类型枚举
@@ -19,7 +21,8 @@ enum EyeType {
   DEMON_EYE = 1,
   BEAUTIFUL_EYE = 2,
   CYBER_EYE = 3,
-  COSMIC_EYE = 4
+  COSMIC_EYE = 4,
+  WHEEL_EYE = 5
 };
 
 // 全局对象
@@ -52,6 +55,10 @@ CyberEyeRenderer cyberRenderer;
 // 星空宇宙眼睛对象
 CosmicEye cosmicEye;
 CosmicEyeRenderer cosmicRenderer;
+
+// 显轮眼对象
+WheelEye wheelEye;
+WheelEyeRenderer wheelRenderer;
 
 // 按钮点击回调函数
 void onButtonClick() {
@@ -107,6 +114,19 @@ void onButtonClick() {
 
     // 立即渲染一次星空眼睛
     cosmicRenderer.render(cosmicEye);
+  } else if (currentEyeType == COSMIC_EYE) {
+    currentEyeType = WHEEL_EYE;
+    Serial.println("Switched to Wheel Eye!");
+
+    // 重新初始化显轮眼对象
+    wheelEye = WheelEye();
+
+    // 清空两个屏幕为白色（显轮眼背景）
+    display.fillScreen(WheelColorConfig::BG_COLOR);
+    display2.fillScreen(WheelColorConfig::BG_COLOR);
+
+    // 立即渲染一次显轮眼
+    wheelRenderer.render(wheelEye);
   } else {
     currentEyeType = NORMAL_EYE;
     Serial.println("Switched to Normal Eye!");
@@ -153,6 +173,7 @@ void setup() {
   beautifulRenderer.begin(sharedSprite);
   cyberRenderer.begin(sharedSprite);
   cosmicRenderer.begin(sharedSprite);
+  wheelRenderer.begin(sharedSprite);
 
   // 配置按钮
   bootButton.attachClick(onButtonClick);
@@ -226,7 +247,7 @@ void loop() {
     sharedSprite->pushSprite(&display2, 0, 0);
 
     delay(CyberEyeConfig::FRAME_DELAY);
-  } else {  // COSMIC_EYE
+  } else if (currentEyeType == COSMIC_EYE) {
     // 更新星空眼球状态
     cosmicEye.randomMove();
     cosmicEye.updateMovement();
@@ -244,5 +265,20 @@ void loop() {
     sharedSprite->pushSprite(&display2, 0, 0);
 
     delay(CosmicEyeConfig::FRAME_DELAY);
+  } else {  // WHEEL_EYE
+    // 更新显轮眼状态
+    wheelEye.randomMove();
+    wheelEye.updateMovement();
+    wheelEye.updateBlink();
+    wheelEye.updateWheelRotation();
+    wheelEye.updateGlow();
+
+    // 渲染显轮眼到屏幕一
+    wheelRenderer.render(wheelEye);
+
+    // 复制内容到屏幕二
+    sharedSprite->pushSprite(&display2, 0, 0);
+
+    delay(WheelEyeConfig::FRAME_DELAY);
   }
 }
