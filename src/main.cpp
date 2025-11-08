@@ -67,7 +67,7 @@ WheelEyeRenderer wheelRenderer;
 StarEye starEye;
 StarEyeRenderer starRenderer;
 
-// 按钮点击回调函数
+// 按钮单击回调函数 - 向下翻页（下一个眼睛类型）
 void onButtonClick() {
   Serial.println("=== Button Clicked! ===");
 
@@ -160,6 +160,99 @@ void onButtonClick() {
   }
 }
 
+// 按钮双击回调函数 - 向上翻页（上一个眼睛类型）
+void onButtonDoubleClick() {
+  Serial.println("=== Button Double Clicked! ===");
+
+  // 循环切换眼睛类型（逆向）
+  if (currentEyeType == NORMAL_EYE) {
+    currentEyeType = STAR_EYE;
+    Serial.println("Switched to Star Eye!");
+
+    // 重新初始化星瞳眼对象
+    starEye = StarEye();
+
+    // 清空两个屏幕为白色（星瞳眼背景）
+    display.fillScreen(StarColorConfig::BG_COLOR);
+    display2.fillScreen(StarColorConfig::BG_COLOR);
+
+    // 立即渲染一次星瞳眼
+    starRenderer.render(starEye);
+  } else if (currentEyeType == STAR_EYE) {
+    currentEyeType = WHEEL_EYE;
+    Serial.println("Switched to Wheel Eye!");
+
+    // 重新初始化显轮眼对象
+    wheelEye = WheelEye();
+
+    // 清空两个屏幕为白色（显轮眼背景）
+    display.fillScreen(WheelColorConfig::BG_COLOR);
+    display2.fillScreen(WheelColorConfig::BG_COLOR);
+
+    // 立即渲染一次显轮眼
+    wheelRenderer.render(wheelEye);
+  } else if (currentEyeType == WHEEL_EYE) {
+    currentEyeType = COSMIC_EYE;
+    Serial.println("Switched to Cosmic Eye!");
+
+    // 重新初始化星空眼睛对象
+    cosmicEye = CosmicEye();
+
+    // 清空两个屏幕为深色宇宙背景
+    display.fillScreen(CosmicColorConfig::BG_COLOR);
+    display2.fillScreen(CosmicColorConfig::BG_COLOR);
+
+    // 立即渲染一次星空眼睛
+    cosmicRenderer.render(cosmicEye);
+  } else if (currentEyeType == COSMIC_EYE) {
+    currentEyeType = CYBER_EYE;
+    Serial.println("Switched to Cyber Eye!");
+
+    // 重新初始化赛博眼睛对象
+    cyberEye = CyberEye();
+
+    // 清空两个屏幕为黑色（赛博眼睛背景）
+    display.fillScreen(CyberColorConfig::BG_COLOR);
+    display2.fillScreen(CyberColorConfig::BG_COLOR);
+
+    // 立即渲染一次赛博眼睛
+    cyberRenderer.render(cyberEye);
+  } else if (currentEyeType == CYBER_EYE) {
+    currentEyeType = BEAUTIFUL_EYE;
+    Serial.println("Switched to Beautiful Eye!");
+
+    // 重新初始化美丽眼睛对象,避免眨眼状态异常
+    beautifulEye = BeautifulEye();
+
+    // 清空两个屏幕为白色（美丽眼睛背景）
+    display.fillScreen(BeautifulColorConfig::BG_COLOR);
+    display2.fillScreen(BeautifulColorConfig::BG_COLOR);
+
+    // 立即渲染一次美丽眼睛
+    beautifulRenderer.render(beautifulEye);
+  } else if (currentEyeType == BEAUTIFUL_EYE) {
+    currentEyeType = DEMON_EYE;
+    Serial.println("Switched to Demon Eye!");
+
+    // 清空两个屏幕为黑色（魅魔眼睛背景）
+    display.fillScreen(0x0000);
+    display2.fillScreen(0x0000);
+
+    // 立即渲染一次魅魔眼睛
+    demonRenderer.render(demonEye);
+  } else {
+    currentEyeType = NORMAL_EYE;
+    Serial.println("Switched to Normal Eye!");
+
+    // 清空两个屏幕为白色（普通眼睛背景）
+    display.fillScreen(ColorConfig::BG_COLOR);
+    display2.fillScreen(ColorConfig::BG_COLOR);
+
+    // 立即渲染一次普通眼睛
+    normalRenderer.render(normalEye);
+  }
+}
+
 void setup() {
   Serial.begin(115200);
   delay(500);
@@ -198,10 +291,14 @@ void setup() {
 
   // 配置按钮
   bootButton.attachClick(onButtonClick);
+  bootButton.attachDoubleClick(onButtonDoubleClick);
   bootButton.setDebounceMs(50);
-  bootButton.setClickMs(400);
+  bootButton.setClickMs(300);        // 单击判定时间(ms) - 减小以便更快识别双击
+  bootButton.setPressMs(1000);       // 长按判定时间(ms)
+  bootButton.setIdleMs(600);         // 双击间隔时间(ms) - 增加以便更容易触发双击
 
   Serial.println("Press BOOT button (GPIO9) to switch eye type.");
+  Serial.println("Single click: Next eye type | Double click: Previous eye type");
   Serial.println("Starting with Normal Eye on both displays.");
 }
 

@@ -302,7 +302,7 @@ namespace StarEyeConfig {
     constexpr float EYE_CENTER_X = 120.0f;
     constexpr float EYE_CENTER_Y = 120.0f;
     constexpr float IRIS_SIZE = 68.0f;          // 大型可爱虹膜
-    constexpr float PUPIL_SIZE = 22.0f;         // 星形瞳孔大小
+    constexpr float PUPIL_SIZE = 52.0f;         // 星形瞳孔大小
     constexpr float MAX_PUPIL_MOVE = 26.0f;     // 灵动的移动
     constexpr float PUPIL_SMOOTH = 0.12f;       // 柔和移动
 
@@ -318,8 +318,8 @@ namespace StarEyeConfig {
     constexpr int MOVE_RANGE_Y = 22;
 
     // 星星参数
-    constexpr int STAR_POINTS = 4;              // 四角星
-    constexpr float STAR_INNER_RATIO = 0.45f;   // 内外半径比例
+    constexpr int STAR_POINTS = 5;              // 四角星
+    constexpr float STAR_INNER_RATIO = 0.25f;   // 星内外半径比例, 越小越尖锐
     constexpr float SPARKLE_SPEED = 0.06f;      // 闪烁速度
     constexpr int SPARKLE_COUNT = 8;            // 闪烁点数量
 
@@ -334,7 +334,7 @@ namespace StarColorConfig {
     constexpr uint16_t IRIS_OUTER = 0xF81F;      // 粉紫色外圈 (magenta)
     constexpr uint16_t IRIS_MIDDLE = 0xFBDF;     // 亮粉色中圈
     constexpr uint16_t IRIS_INNER = 0xFE9F;      // 粉白色内圈
-    constexpr uint16_t PUPIL_COLOR = 0xF81F;     // 粉紫色星形瞳孔
+    constexpr uint16_t PUPIL_COLOR = 0xFFFF;     // 白色星形瞳孔
     constexpr uint16_t PUPIL_CORE = 0xFFFF;      // 白色瞳孔核心
     constexpr uint16_t HIGHLIGHT_MAIN = 0xFFFF;  // 白色主高光
     constexpr uint16_t HIGHLIGHT_SEC = 0xFEDF;   // 淡粉色次高光
