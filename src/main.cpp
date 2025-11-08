@@ -13,6 +13,8 @@
 #include "eyes/cosmic/CosmicEyeRenderer.h"
 #include "eyes/wheel/WheelEye.h"
 #include "eyes/wheel/WheelEyeRenderer.h"
+#include "eyes/star/StarEye.h"
+#include "eyes/star/StarEyeRenderer.h"
 #include "Config.h"
 
 // 眼睛类型枚举
@@ -22,7 +24,8 @@ enum EyeType {
   BEAUTIFUL_EYE = 2,
   CYBER_EYE = 3,
   COSMIC_EYE = 4,
-  WHEEL_EYE = 5
+  WHEEL_EYE = 5,
+  STAR_EYE = 6
 };
 
 // 全局对象
@@ -59,6 +62,10 @@ CosmicEyeRenderer cosmicRenderer;
 // 显轮眼对象
 WheelEye wheelEye;
 WheelEyeRenderer wheelRenderer;
+
+// 星瞳眼对象
+StarEye starEye;
+StarEyeRenderer starRenderer;
 
 // 按钮点击回调函数
 void onButtonClick() {
@@ -127,6 +134,19 @@ void onButtonClick() {
 
     // 立即渲染一次显轮眼
     wheelRenderer.render(wheelEye);
+  } else if (currentEyeType == WHEEL_EYE) {
+    currentEyeType = STAR_EYE;
+    Serial.println("Switched to Star Eye!");
+
+    // 重新初始化星瞳眼对象
+    starEye = StarEye();
+
+    // 清空两个屏幕为白色（星瞳眼背景）
+    display.fillScreen(StarColorConfig::BG_COLOR);
+    display2.fillScreen(StarColorConfig::BG_COLOR);
+
+    // 立即渲染一次星瞳眼
+    starRenderer.render(starEye);
   } else {
     currentEyeType = NORMAL_EYE;
     Serial.println("Switched to Normal Eye!");
@@ -174,6 +194,7 @@ void setup() {
   cyberRenderer.begin(sharedSprite);
   cosmicRenderer.begin(sharedSprite);
   wheelRenderer.begin(sharedSprite);
+  starRenderer.begin(sharedSprite);
 
   // 配置按钮
   bootButton.attachClick(onButtonClick);
@@ -265,7 +286,7 @@ void loop() {
     sharedSprite->pushSprite(&display2, 0, 0);
 
     delay(CosmicEyeConfig::FRAME_DELAY);
-  } else {  // WHEEL_EYE
+  } else if (currentEyeType == WHEEL_EYE) {
     // 更新显轮眼状态
     wheelEye.randomMove();
     wheelEye.updateMovement();
@@ -280,5 +301,21 @@ void loop() {
     sharedSprite->pushSprite(&display2, 0, 0);
 
     delay(WheelEyeConfig::FRAME_DELAY);
+  } else {  // STAR_EYE
+    // 更新星瞳眼状态
+    starEye.randomMove();
+    starEye.updateMovement();
+    starEye.updateBlink();
+    starEye.updateStarRotation();
+    starEye.updateSparkles();
+    starEye.updateGlow();
+
+    // 渲染星瞳眼到屏幕一
+    starRenderer.render(starEye);
+
+    // 复制内容到屏幕二
+    sharedSprite->pushSprite(&display2, 0, 0);
+
+    delay(StarEyeConfig::FRAME_DELAY);
   }
 }

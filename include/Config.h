@@ -297,4 +297,51 @@ namespace WheelColorConfig {
     constexpr uint16_t GLOW_COLOR = 0xF800;      // 红色发光
 }
 
+// 星瞳眼配置 (Anime Star Pupil Eye)
+namespace StarEyeConfig {
+    constexpr float EYE_CENTER_X = 120.0f;
+    constexpr float EYE_CENTER_Y = 120.0f;
+    constexpr float IRIS_SIZE = 68.0f;          // 大型可爱虹膜
+    constexpr float PUPIL_SIZE = 22.0f;         // 星形瞳孔大小
+    constexpr float MAX_PUPIL_MOVE = 26.0f;     // 灵动的移动
+    constexpr float PUPIL_SMOOTH = 0.12f;       // 柔和移动
+
+    // 眨眼参数 - 可爱的眨眼
+    constexpr int BLINK_MIN_INTERVAL = 2800;
+    constexpr int BLINK_MAX_INTERVAL = 6500;
+    constexpr float BLINK_SPEED = 0.14f;
+
+    // 眼球运动参数 - 活泼灵动
+    constexpr int MOVE_MIN_INTERVAL = 800;
+    constexpr int MOVE_MAX_INTERVAL = 2400;
+    constexpr int MOVE_RANGE_X = 26;
+    constexpr int MOVE_RANGE_Y = 22;
+
+    // 星星参数
+    constexpr int STAR_POINTS = 4;              // 四角星
+    constexpr float STAR_INNER_RATIO = 0.45f;   // 内外半径比例
+    constexpr float SPARKLE_SPEED = 0.06f;      // 闪烁速度
+    constexpr int SPARKLE_COUNT = 8;            // 闪烁点数量
+
+    // 渲染参数
+    constexpr int FRAME_DELAY = 50;  // 约20fps
+}
+
+// 星瞳眼颜色配置
+namespace StarColorConfig {
+    constexpr uint16_t BG_COLOR = 0xFFFF;        // 白色背景
+    constexpr uint16_t SCLERA_COLOR = 0xFFFF;    // 纯白巩膜
+    constexpr uint16_t IRIS_OUTER = 0xF81F;      // 粉紫色外圈 (magenta)
+    constexpr uint16_t IRIS_MIDDLE = 0xFBDF;     // 亮粉色中圈
+    constexpr uint16_t IRIS_INNER = 0xFE9F;      // 粉白色内圈
+    constexpr uint16_t PUPIL_COLOR = 0xF81F;     // 粉紫色星形瞳孔
+    constexpr uint16_t PUPIL_CORE = 0xFFFF;      // 白色瞳孔核心
+    constexpr uint16_t HIGHLIGHT_MAIN = 0xFFFF;  // 白色主高光
+    constexpr uint16_t HIGHLIGHT_SEC = 0xFEDF;   // 淡粉色次高光
+    constexpr uint16_t SPARKLE_COLOR = 0xFFFF;   // 白色闪烁
+    constexpr uint16_t EYELID_COLOR = 0xFDF8;    // 白皙皮肤
+    constexpr uint16_t EYELASH_COLOR = 0x4208;   // 深棕色睫毛
+    constexpr uint16_t GLOW_COLOR = 0xFBDF;      // 粉色发光
+}
+
 #endif // CONFIG_H
