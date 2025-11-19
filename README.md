@@ -1,7 +1,7 @@
 # Beautiful Eyes - 嵌入式眼睛动画项目
 
-[![PlatformIO CI](https://github.com/14790897/beautiful-eyes/actions/workflows/build.yml/badge.svg)](https://github.com/14790897/beautiful-eyes/actions/workflows/build.yml)
-[![Release](https://img.shields.io/github/v/release/14790897/beautiful-eyes)](https://github.com/14790897/beautiful-eyes/releases)
+[![PlatformIO CI](https://github.com/14790897/beautiful-eyes-esp32/actions/workflows/build.yml/badge.svg)](https://github.com/14790897/beautiful-eyes-esp32/actions/workflows/build.yml)
+[![Release](https://img.shields.io/github/v/release/14790897/beautiful-eyes-esp32)](https://github.com/14790897/beautiful-eyes-esp32/releases)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 一个运行在 ESP32-C3 上的眼睛动画项目，支持多种风格的眼睛效果。双屏同步显示，营造立体生动的眼睛效果。
