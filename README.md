@@ -119,7 +119,7 @@
 
 ### 方法 1: 下载预编译固件 (推荐)
 
-1. 前往 [Releases](https://github.com/YOUR_USERNAME/beautiful-eyes/releases) 页面
+1. 前往 [Releases](https://github.com/14790897/beautiful-eyes-esp32/releases) 页面
 2. 下载最新版本的固件包
 3. 解压并按照 `FLASH_GUIDE.md` 说明烧录
 
@@ -144,8 +144,8 @@ esptool.py --chip esp32c3 --port COM5 --baud 460800 \
 
 ```bash
 # 克隆仓库
-git clone https://github.com/YOUR_USERNAME/beautiful-eyes.git
-cd beautiful-eyes
+git clone https://github.com/14790897/beautiful-eyes-esp32.git
+cd beautiful-eyes-esp32
 
 # 安装 PlatformIO
 pip install platformio
@@ -334,7 +334,7 @@ pio run
 
 ## 📝 更新日志
 
-查看 [Releases](https://github.com/YOUR_USERNAME/beautiful-eyes/releases) 获取完整更新日志。
+查看 [Releases](https://github.com/14790897/beautiful-eyes-esp32/releases) 获取完整更新日志。
 
 ### 最新更新
 - ✅ 添加双击向上翻页功能
@@ -360,8 +360,7 @@ pio run
 
 ## 📧 联系方式
 
-- 提交 Issue: [GitHub Issues](https://github.com/YOUR_USERNAME/beautiful-eyes/issues)
-- 邮件: your.email@example.com
+- 提交 Issue: [GitHub Issues](https://github.com/14790897/beautiful-eyes-esp32/issues)
 
 ---
 

@@ -76,11 +76,14 @@ jobs:
         Target: ESP32-C3 (AirM2M Core)
 
         Features:
-        - Normal Eye: Standard human eye animation
-        - Demon Eye: Demonic eye with vertical pupil and glow effect
-        - Beautiful Eye: Detailed feminine eye with makeup effects
+        - 7种眼睛风格: 普通、恶魔、美丽女生、赛博朋克、星空宇宙、显轮眼、星瞳眼
+        - 双屏同步显示
+        - 单击BOOT按钮: 下一个眼睛类型
+        - 双击BOOT按钮: 上一个眼睛类型
 
-        Press BOOT button (GPIO9) to switch between eye types.
+        Hardware:
+        - ESP32-C3 (AirM2M Core)
+        - 2x gc9a01 240x240 LCD Displays
         EOF
 
         # 创建详细的烧录说明
@@ -94,7 +97,7 @@ jobs:
 
         ## 硬件要求
         - ESP32-C3 开发板 (推荐: AirM2M Core ESP32-C3)
-        - ST7789 240x240 LCD 显示屏
+        - 2块 gc9a01 240x240 LCD 显示屏（双屏同步显示）
         - USB Type-C 数据线
 
         ## 烧录方法
@@ -125,8 +128,8 @@ jobs:
 
         1. 克隆仓库:
         \`\`\`bash
-        git clone https://github.com/YOUR_USERNAME/beautiful-eyes.git
-        cd beautiful-eyes
+        git clone https://github.com/14790897/beautiful-eyes-esp32.git
+        cd beautiful-eyes-esp32
         \`\`\`
 
         2. 烧录:
@@ -147,8 +150,9 @@ jobs:
         ## 使用说明
 
         ### 按钮控制
-        - 按 BOOT 按钮 (GPIO9): 切换眼睛类型
-        - 切换顺序: 普通眼睛 → 魅魔眼睛 → 美丽女生眼睛 → (循环)
+        - **单击** BOOT 按钮 (GPIO9): 向下翻页（下一个眼睛类型）
+        - **双击** BOOT 按钮 (GPIO9): 向上翻页（上一个眼睛类型）
+        - 切换顺序: 普通眼睛 → 恶魔眼睛 → 美丽女生眼睛 → 赛博朋克眼睛 → 星空宇宙眼睛 → 显轮眼 → 星瞳眼 → (循环)
 
         ### 眼睛类型
 
@@ -157,7 +161,7 @@ jobs:
         - 棕色虹膜
         - 自然的眨眼动画
 
-        **2. 魅魔眼睛 (Demon Eye)**
+        **2. 恶魔眼睛 (Demon Eye)**
         - 深色巩膜
         - 红色虹膜
         - 竖瞳
@@ -171,6 +175,36 @@ jobs:
         - 浓密睫毛
         - 三重高光
         - 闪亮动画
+
+        **4. 赛博朋克眼睛 (Cyber Eye)**
+        - 青色虹膜
+        - HUD显示界面
+        - 扫描线效果
+        - 网格纹理
+        - 数据流动画
+        - 准星瞄准
+
+        **5. 星空宇宙眼睛 (Cosmic Eye)**
+        - 深紫灰巩膜
+        - 星云渐变
+        - 星系旋转
+        - 闪烁星星
+        - 流星效果
+        - 脉冲发光
+
+        **6. 显轮眼 (Sharingan)**
+        - 纯白巩膜
+        - 鲜红色虹膜
+        - 三勾玉设计
+        - 勾玉旋转
+        - 红色发光
+
+        **7. 星瞳眼 (Star Pupil Eye)**
+        - 粉紫色虹膜
+        - 五角星瞳孔
+        - 多层渐变
+        - 闪烁星光
+        - 粉色发光
 
         ## 故障排除
 
@@ -188,20 +222,41 @@ jobs:
         - 这是之前版本的 bug，当前版本已修复
         - 重新烧录最新固件
 
+        ### 双击不工作或难以触发
+        - 检查串口输出是否有双击日志
+        - 可以在代码中调整双击参数 (setIdleMs/setClickMs)
+        - 确保两次点击间隔在设定时间内
+
         ## 引脚定义
 
+        ### 共享SPI引脚
         | 功能 | GPIO |
         |------|------|
         | SCLK | 2 |
         | MOSI | 3 |
+
+        ### 屏幕一引脚
+        | 功能 | GPIO |
+        |------|------|
         | DC   | 10 |
         | CS   | 6 |
         | RST  | 7 |
+
+        ### 屏幕二引脚
+        | 功能 | GPIO |
+        |------|------|
+        | DC   | 1 |
+        | CS   | 0 |
+        | RST  | 4 |
+
+        ### 按钮
+        | 功能 | GPIO |
+        |------|------|
         | BOOT | 9 |
 
         ## 技术支持
 
-        如有问题请提交 Issue: https://github.com/YOUR_USERNAME/beautiful-eyes/issues
+        如有问题请提交 Issue: https://github.com/14790897/beautiful-eyes-esp32/issues
         EOF
 
         # 创建 checksums
